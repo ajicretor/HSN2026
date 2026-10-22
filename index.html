@@ -92,13 +92,6 @@ section.s{padding:clamp(48px,8vw,92px) 0}
 @media(prefers-color-scheme:dark){.panel .btn{color:#06241f}}
 .err{min-height:1.4em;margin:8px 0 0;font-size:.88rem;color:#b91c1c}
 @media(prefers-color-scheme:dark){.err{color:#f87171}}
-.types{display:grid;gap:12px;margin-top:18px;grid-template-columns:repeat(auto-fit,minmax(190px,1fr))}
-.type{display:flex;gap:12px;align-items:center;padding:12px 14px;border-radius:14px;background:var(--bg);border:1px solid var(--line);font-size:.86rem;color:var(--mut)}
-.type b{display:block;font-family:Cinzel,serif;color:var(--ink);font-size:.95rem}
-.dot{flex:none;width:44px;height:44px;border-radius:50%;display:grid;place-items:center;font:700 1.1rem Cinzel,serif;color:var(--tc);background:linear-gradient(135deg,var(--a),var(--b));box-shadow:inset 0 0 0 3px rgba(255,255,255,.55)}
-.steps{list-style:none;counter-reset:st;margin:0;padding:0;display:grid;gap:10px}
-.steps li{counter-increment:st;display:flex;gap:12px;align-items:flex-start;font-size:.94rem;color:var(--mut)}
-.steps li::before{content:counter(st);flex:none;width:28px;height:28px;border-radius:50%;display:grid;place-items:center;font:700 .85rem Cinzel,serif;color:#3b2800;background:linear-gradient(135deg,#f8dd7a,#e0a526)}
 
 details{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:0 20px}
 details+details{margin-top:10px}
@@ -371,12 +364,6 @@ footer .copy{display:block;margin-top:10px;font-size:.78rem;opacity:.6}
             </div>
             <p class="err" id="e-sertifikat" role="alert"></p>
           </form>
-          <div class="types">
-            <div class="type" style="--a:#7fd4c8;--b:#178888;--tc:#06302c"><span class="dot">P</span><div><b>Partisipasi</b>Peserta terdaftar</div></div>
-            <div class="type" style="--a:#f8dd7a;--b:#c8921b;--tc:#3b2800"><span class="dot">1</span><div><b>Juara 1</b>Medali emas</div></div>
-            <div class="type" style="--a:#eef1f4;--b:#97a3b0;--tc:#26303a"><span class="dot">2</span><div><b>Juara 2</b>Medali perak</div></div>
-            <div class="type" style="--a:#f2b983;--b:#a8622b;--tc:#3a1d08"><span class="dot">3</span><div><b>Juara 3</b>Medali perunggu</div></div>
-          </div>
         </div>
 
         <div class="panel" id="p-donasi" role="tabpanel" aria-labelledby="t-donasi" hidden>
@@ -389,11 +376,6 @@ footer .copy{display:block;margin-top:10px;font-size:.78rem;opacity:.6}
             </div>
             <p class="err" id="e-donasi" role="alert"></p>
           </form>
-          <ol class="steps">
-            <li>Siapkan bukti donasi dari panitia, berupa kode atau nomor tanda terima.</li>
-            <li>Ketik kode tersebut pada kolom di atas.</li>
-            <li>Cocokkan nama dan nominal yang tampil dengan donasi Anda.</li>
-          </ol>
         </div>
       </div>
     </div>
