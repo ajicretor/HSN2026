@@ -189,7 +189,7 @@ function certHtml(d,jr,rk){
   return `<div class="cert${jr?" g":""}"><img alt="" src="${jr?CERT_G:CERT_S}">
   <div class="ct c-ttl${jr?" j":""}">${jr?"JUARA "+rk:"PARTISIPASI"}</div>
   ${d.no?`<div class="ct c-no">Nomor: ${esc(d.no)}</div>`:""}
-  <div class="ct c-nm" ${nm.length>26?'style="font-size:2.35cqw"':""}>${esc(nm)}</div>
+  <div class="ct c-nm" ${nm.length>38?'style="font-size:1.85cqw"':nm.length>26?'style="font-size:2.35cqw"':""}>${esc(nm)}</div>
   ${d.kategori?`<div class="ct c-kt">Kategori ${esc(d.kategori)}</div>`:""}
   <div class="ct c-ds">${L.map(esc).join("<br>")}</div></div>`;
 }
