@@ -12,7 +12,7 @@ Situs ini memuat profil dan kegiatan MWC NU, struktur dan tokoh pengurus, rangka
 
 | File | Fungsi |
 |---|---|
-| `index.html` | Beranda: Tentang, Kegiatan (galeri foto), HSN, Struktur, Tokoh (dengan profil), dan pintu masuk verifikasi |
+| `index.html` | Beranda: Tentang, Kegiatan (galeri foto), HSN, Struktur, Banom NU, Tokoh (dengan profil), dan pintu masuk verifikasi |
 | `verifikasi.html` | Verifikasi keaslian **sertifikat lomba** (kode `HSN-XXXX-XXXX`), tampilan sertifikat, unduh PDF/PNG, cetak |
 | `donasi.html` | Verifikasi **donatur** dan sertifikat donasi, unduh PDF/PNG, cetak |
 | `monitoring.html` | Dasbor progres seksi kepanitiaan HSN 2026 (baca publik, ubah dengan kode panitia) |
@@ -80,7 +80,7 @@ Fitur yang bergantung pada Apps Script (verifikasi dan monitoring) tetap memangg
 
 ## Memperbarui konten
 
-- **Menu dan bagian halaman:** tiap bagian di `index.html` berupa `<section id="...">` (`tentang`, `kegiatan`, `hsn`, `struktur`, `tokoh`, `verifikasi`). Menu atas mengikuti `id` ini.
+- **Menu dan bagian halaman:** tiap bagian di `index.html` berupa `<section id="...">` (`tentang`, `kegiatan`, `hsn`, `struktur`, `banom`, `tokoh`, `verifikasi`). Menu atas mengikuti `id` ini.
 - **Kegiatan:** setiap kegiatan adalah kartu `<article class="kg kgp" data-gal="nama">` (saat ini: Naharul Ijtima’, Musyawarah Kerja I, Lailatul Ijtima’, Ngopi NU). Isi kartu:
   - tombol `.kph` berisi foto sampul dan label jumlah foto (`.kcnt`, misalnya "4 foto"),
   - foto galeri berupa `<img hidden data-full alt="..." data-cap="...">`; `data-cap` menjadi keterangan di tampilan layar penuh,
@@ -93,6 +93,16 @@ Fitur yang bergantung pada Apps Script (verifikasi dan monitoring) tetap memangg
   - `<img hidden data-pfimg alt="..." src="...">` untuk foto di jendela profil,
   - `<div hidden class="pfd" data-name="..." data-role="..."><p>...</p></div>`; setiap `<p>` menjadi satu paragraf narasi.
 - **Struktur:** ubah daftar di `#struktur`.
+- **Banom NU:** bagian `#banom` berisi kartu `<div class="bnc">` (nama `<h3>`, sasaran `.bl`, deskripsi `<p>`). Tambah, hapus, atau ubah kartu sesuai Banom yang aktif di Kecamatan Citeureup. Di dasar tiap kartu ada kolom ketua (`<div class="kt kt0">`) yang masih berisi "Nama ketua menyusul". Untuk mengisinya, ganti dengan:
+  ```html
+  <div class="kt tkp" role="button" tabindex="0" aria-haspopup="dialog" aria-label="Lihat profil NAMA">
+    <span class="av"><img alt="NAMA" src="data:image/jpeg;base64,..."></span>
+    <div class="kb"><span class="ktl">Ketua PAC</span><b>NAMA</b><span class="tkm">Lihat profil</span></div>
+    <img hidden data-pfimg alt="NAMA" src="data:image/jpeg;base64,...">
+    <div hidden class="pfd" data-name="NAMA" data-role="Ketua PAC ... Kecamatan Citeureup"><p>Narasi profil.</p></div>
+  </div>
+  ```
+  Profil terbuka di jendela yang sama dengan profil tokoh. Jika menambah bagian baru, daftarkan juga `id`-nya di menu atas dan di array `secs` pada skrip `index.html` agar menu aktif mengikuti posisi baca.
 - **Foto:** karena semua file mandiri, foto ditanam sebagai data URI (base64). Perkecil dan kompres foto sebelum ditanam agar halaman tetap ringan, tetapi jangan terlalu kecil: foto di bawah sekitar 500 px tampak buram di tampilan layar penuh. Foto tokoh untuk kartu berbentuk persegi dan dipotong bulat (sekitar 200 px sudah cukup); foto untuk jendela profil sebaiknya potret.
 - **Font sertifikat:** font di dalam sertifikat (Cinzel dan Playfair Display) disesuaikan dengan template gambar. Mengubahnya dapat menggeser posisi teks di PNG, PDF, dan hasil cetak. Font judul halaman memakai Poppins.
 
