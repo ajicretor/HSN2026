@@ -155,7 +155,7 @@ body[data-jenis="juara"] .hero{background:linear-gradient(145deg,#06302c,#0b5d5d
     <div id="res" aria-live="polite"></div>
   </section>
   <section class="certsec" id="certsec" hidden>
-    <div class="chd"><h2>Tampilan Sertifikat</h2><div class="chb"><button type="button" id="dlp" class="pr">Unduh PDF</button><button type="button" id="dlg">Unduh PNG</button><button type="button" id="fs">Layar penuh</button></div></div>
+    <div class="chd"><h2>Tampilan Sertifikat</h2><div class="chb"><button type="button" id="dlp" class="pr">Unduh PDF</button><button type="button" id="dlg">Unduh PNG</button><button type="button" id="pr">Cetak</button><button type="button" id="fs">Layar penuh</button></div></div>
     <div class="certwrap" id="certwrap"></div>
     <p class="cnote">Tampilan ini dibuat dari data arsip panitia. Di layar kecil, ketuk sertifikat untuk memperbesar.</p>
   </section>
@@ -266,6 +266,17 @@ async function unduh(fmt){
   bt.disabled=false;bt.textContent=t0;
 }
 $("dlp").onclick=()=>unduh("pdf");$("dlg").onclick=()=>unduh("png");
+$("pr").onclick=async()=>{
+  if(!lastC)return;
+  const w=window.open("");if(!w)return;           // dibuka dulu agar tidak diblokir pop-up
+  const bt=$("pr"),t0=bt.textContent;bt.disabled=true;bt.textContent="Menyiapkan…";
+  try{
+    const {d,jr,rk}=lastC,c=await renderCanvas(d,jr,rk);
+    w.document.write('<title>Sertifikat</title><style>@page{size:landscape;margin:0}body{margin:0}img{width:100%}</style><img src="'+c.toDataURL("image/png")+'">');
+    w.document.close();setTimeout(()=>w.print(),400);
+  }catch(e){w.close();alert("Gagal menyiapkan cetakan. Coba lagi atau gunakan Unduh PDF.")}
+  bt.disabled=false;bt.textContent=t0;
+};
 function openLb(){const lb=$("lb");lb.innerHTML='<div class="lbin">'+$("certwrap").innerHTML+'</div>';lb.classList.add("on");lb.scrollLeft=Math.max(0,(lb.scrollWidth-lb.clientWidth)/2)}
 $("lb").onclick=()=>$("lb").classList.remove("on");
 $("fs").onclick=openLb;
