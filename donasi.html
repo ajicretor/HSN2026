@@ -13,15 +13,18 @@
 <title>Verifikasi Donatur · HSN 2026</title>
 <meta name="theme-color" content="#7f1119">
 <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Cinzel:wght@600;700&family=Playfair+Display:ital,wght@1,700&display=swap">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Cinzel:wght@600;700&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Playfair+Display:ital,wght@1,700&display=swap">
 <style>
+:root{--ff-body:"Plus Jakarta Sans",system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;--ff-head:Cinzel,Georgia,"Times New Roman",serif}
+h1,h2,h3{font-family:var(--ff-head);letter-spacing:.01em}
+
 :root{box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px);
 --bg:#f8eeee;--card:#fff;--tx:#341416;--mut:#7a6163;--pri:#c0262d;--pri2:#7f1119;--gold:#b87a0e;--gold2:#e0a526;--bd:#ecdada;--inp:#fbf5f5;--ok:#15803d;--okbg:#e6f5ea;--bad:#b91c1c;--badbg:#fdecec;--sh:0 10px 40px -12px rgba(127,17,25,.28)}
 @media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#150a0b;--card:#221213;--tx:#f6e8e8;--mut:#b49c9d;--pri:#ff6b6b;--pri2:#8f1620;--gold:#e0b556;--gold2:#e0b556;--bd:#3d2426;--inp:#1a0e0f;--ok:#4ade80;--okbg:#12301f;--bad:#f87171;--badbg:#341616;--sh:0 10px 40px -12px rgba(0,0,0,.6)}}
 :root[data-theme="dark"]{--bg:#150a0b;--card:#221213;--tx:#f6e8e8;--mut:#b49c9d;--pri:#ff6b6b;--pri2:#8f1620;--gold:#e0b556;--gold2:#e0b556;--bd:#3d2426;--inp:#1a0e0f;--ok:#4ade80;--okbg:#12301f;--bad:#f87171;--badbg:#341616;--sh:0 10px 40px -12px rgba(0,0,0,.6)}
 html{scroll-padding-top:env(safe-area-inset-top,0px)}
 *{box-sizing:border-box}
-body{margin:0;min-height:100vh;display:flex;flex-direction:column;color:var(--tx);font-family:system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;line-height:1.5;
+body{margin:0;min-height:100vh;display:flex;flex-direction:column;color:var(--tx);font-family:var(--ff-body);line-height:1.5;
 background:radial-gradient(900px 500px at 8% -10%,rgba(192,38,45,.2),transparent 60%),radial-gradient(800px 500px at 100% 100%,rgba(224,165,38,.18),transparent 60%),var(--bg);background-attachment:fixed}
 .shell{flex:1 0 auto;width:min(1120px,100%);margin:0 auto;padding:clamp(14px,3vw,36px);display:grid;gap:clamp(14px,2.5vw,28px);align-content:center}
 .hero{position:relative;overflow:hidden;border-radius:22px;padding:clamp(20px,3.5vw,38px);color:#fff;background:linear-gradient(145deg,#7f1119,#c0262d 60%,#d9453f);box-shadow:var(--sh)}
@@ -42,9 +45,9 @@ background:radial-gradient(900px 500px at 8% -10%,rgba(192,38,45,.2),transparent
 .field input{width:100%;font:600 clamp(1.05rem,2.6vw,1.35rem) ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;letter-spacing:.08em;text-transform:uppercase;color:var(--tx);background:var(--inp);border:2px solid var(--bd);border-radius:14px;padding:16px 92px 16px 16px;transition:border-color .2s,box-shadow .2s}
 .field input::placeholder{color:var(--mut);opacity:.55;font-weight:500}
 .field input:focus{outline:none;border-color:var(--pri);box-shadow:0 0 0 4px rgba(192,38,45,.18)}
-.paste{position:absolute;right:10px;top:50%;transform:translateY(-50%);background:none;border:1px solid var(--bd);color:var(--pri);border-radius:9px;padding:6px 10px;font:600 .8rem system-ui;cursor:pointer}
+.paste{position:absolute;right:10px;top:50%;transform:translateY(-50%);background:none;border:1px solid var(--bd);color:var(--pri);border-radius:9px;padding:6px 10px;font:600 .8rem var(--ff-body);cursor:pointer}
 .paste:hover{background:var(--inp)}
-.go{width:100%;margin-top:12px;display:flex;align-items:center;justify-content:center;gap:10px;font:700 1.02rem system-ui;color:#fff;background:linear-gradient(135deg,var(--pri2),var(--pri));border:none;border-radius:14px;padding:15px;cursor:pointer;transition:transform .15s,box-shadow .15s,opacity .2s;box-shadow:0 8px 20px -8px rgba(192,38,45,.65)}
+.go{width:100%;margin-top:12px;display:flex;align-items:center;justify-content:center;gap:10px;font:700 1.02rem var(--ff-body);color:#fff;background:linear-gradient(135deg,var(--pri2),var(--pri));border:none;border-radius:14px;padding:15px;cursor:pointer;transition:transform .15s,box-shadow .15s,opacity .2s;box-shadow:0 8px 20px -8px rgba(192,38,45,.65)}
 :root[data-theme="dark"] .go{color:#2a0508}
 @media (prefers-color-scheme:dark){:root:not([data-theme="light"]) .go{color:#2a0508}}
 .go:hover{transform:translateY(-1px)}
@@ -80,7 +83,7 @@ background:radial-gradient(900px 500px at 8% -10%,rgba(192,38,45,.2),transparent
 .it dt{font-size:.7rem;letter-spacing:.06em;text-transform:uppercase;color:var(--mut)}
 .it dd{margin:2px 0 0;font-weight:600;word-break:break-word}
 .acts{display:flex;flex-wrap:wrap;gap:8px;margin-top:16px;animation:up .5s .5s both}
-.acts button{font:600 .88rem system-ui;color:var(--tx);background:var(--card);border:1px solid var(--bd);border-radius:10px;padding:9px 14px;cursor:pointer}
+.acts button{font:600 .88rem var(--ff-body);color:var(--tx);background:var(--card);border:1px solid var(--bd);border-radius:10px;padding:9px 14px;cursor:pointer}
 .acts button:hover{border-color:var(--pri);color:var(--pri)}
 .stamp{margin-top:12px;font-size:.76rem;color:var(--mut);animation:up .5s .55s both}
 @keyframes up{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:none}}
@@ -105,7 +108,7 @@ background:radial-gradient(900px 500px at 8% -10%,rgba(192,38,45,.2),transparent
 .chd{display:flex;justify-content:space-between;align-items:center;gap:10px;flex-wrap:wrap;margin-bottom:12px}
 .chd h2{margin:0;font-size:clamp(1.05rem,2vw,1.3rem)}
 .chb{display:flex;gap:8px;flex-wrap:wrap}
-.chd button{font:600 .85rem system-ui;color:var(--tx);background:var(--card);border:1px solid var(--bd);border-radius:10px;padding:8px 14px;cursor:pointer}
+.chd button{font:600 .85rem var(--ff-body);color:var(--tx);background:var(--card);border:1px solid var(--bd);border-radius:10px;padding:8px 14px;cursor:pointer}
 .chd button:hover{border-color:var(--pri);color:var(--pri)}
 .chd button.pr{background:linear-gradient(135deg,var(--pri2),var(--pri));color:#fff;border-color:transparent}
 .chd button:disabled{opacity:.65;cursor:wait}

@@ -12,15 +12,18 @@
 <title>Verifikasi Sertifikat · Lomba HSN 2026</title>
 <meta name="theme-color" content="#0b5d5d">
 <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Cinzel:wght@600;700&family=Playfair+Display:ital,wght@1,700&display=swap">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Cinzel:wght@600;700&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Playfair+Display:ital,wght@1,700&display=swap">
 <style>
+:root{--ff-body:"Plus Jakarta Sans",system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;--ff-head:Cinzel,Georgia,"Times New Roman",serif}
+h1,h2,h3{font-family:var(--ff-head);letter-spacing:.01em}
+
 :root{box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px);
 --bg:#eef4f1;--card:#fff;--tx:#14302b;--mut:#62776f;--pri:#178888;--pri2:#0b5d5d;--gold:#b87a0e;--gold2:#e0a526;--bd:#dbe6e1;--inp:#f5f9f7;--ok:#15803d;--okbg:#e6f5ea;--bad:#b91c1c;--badbg:#fdecec;--sh:0 10px 40px -12px rgba(11,93,93,.25)}
 @media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#0a1311;--card:#13201c;--tx:#e6f1ed;--mut:#8fa59d;--pri:#2dd4bf;--pri2:#0b5d5d;--gold:#e0b556;--gold2:#e0b556;--bd:#25372f;--inp:#0e1916;--ok:#4ade80;--okbg:#12301f;--bad:#f87171;--badbg:#341616;--sh:0 10px 40px -12px rgba(0,0,0,.6)}}
 :root[data-theme="dark"]{--bg:#0a1311;--card:#13201c;--tx:#e6f1ed;--mut:#8fa59d;--pri:#2dd4bf;--pri2:#0b5d5d;--gold:#e0b556;--gold2:#e0b556;--bd:#25372f;--inp:#0e1916;--ok:#4ade80;--okbg:#12301f;--bad:#f87171;--badbg:#341616;--sh:0 10px 40px -12px rgba(0,0,0,.6)}
 html{scroll-padding-top:env(safe-area-inset-top,0px);-webkit-text-size-adjust:100%;text-size-adjust:100%}
 *{box-sizing:border-box}
-body{margin:0;min-height:100vh;display:flex;flex-direction:column;color:var(--tx);font-family:system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;line-height:1.5;
+body{margin:0;min-height:100vh;display:flex;flex-direction:column;color:var(--tx);font-family:var(--ff-body);line-height:1.5;
 background:radial-gradient(900px 500px at 8% -10%,rgba(23,136,136,.22),transparent 60%),radial-gradient(800px 500px at 100% 100%,rgba(224,165,38,.18),transparent 60%),var(--bg);background-attachment:fixed}
 .shell{grid-template-columns:minmax(0,1fr);flex:1 0 auto;width:min(1120px,100%);margin:0 auto;padding:clamp(14px,3vw,36px);display:grid;gap:clamp(14px,2.5vw,28px);align-content:center}
 .hero{position:relative;overflow:hidden;border-radius:22px;padding:clamp(20px,3.5vw,38px);color:#fff;background:linear-gradient(145deg,#0b5d5d,#178888 60%,#1f9a8a);box-shadow:var(--sh)}
@@ -41,9 +44,9 @@ background:radial-gradient(900px 500px at 8% -10%,rgba(23,136,136,.22),transpare
 .field input{width:100%;font:600 clamp(1.05rem,2.6vw,1.35rem) ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;letter-spacing:.08em;text-transform:uppercase;color:var(--tx);background:var(--inp);border:2px solid var(--bd);border-radius:14px;padding:16px 92px 16px 16px;transition:border-color .2s,box-shadow .2s}
 .field input::placeholder{color:var(--mut);opacity:.55;font-weight:500}
 .field input:focus{outline:none;border-color:var(--pri);box-shadow:0 0 0 4px rgba(23,136,136,.18)}
-.paste{position:absolute;right:10px;top:50%;transform:translateY(-50%);background:none;border:1px solid var(--bd);color:var(--pri);border-radius:9px;padding:6px 10px;font:600 .8rem system-ui;cursor:pointer}
+.paste{position:absolute;right:10px;top:50%;transform:translateY(-50%);background:none;border:1px solid var(--bd);color:var(--pri);border-radius:9px;padding:6px 10px;font:600 .8rem var(--ff-body);cursor:pointer}
 .paste:hover{background:var(--okbg)}
-.go{width:100%;margin-top:12px;display:flex;align-items:center;justify-content:center;gap:10px;font:700 1.02rem system-ui;color:#fff;background:linear-gradient(135deg,var(--pri2),var(--pri));border:none;border-radius:14px;padding:15px;cursor:pointer;transition:transform .15s,box-shadow .15s,opacity .2s;box-shadow:0 8px 20px -8px rgba(23,136,136,.7)}
+.go{width:100%;margin-top:12px;display:flex;align-items:center;justify-content:center;gap:10px;font:700 1.02rem var(--ff-body);color:#fff;background:linear-gradient(135deg,var(--pri2),var(--pri));border:none;border-radius:14px;padding:15px;cursor:pointer;transition:transform .15s,box-shadow .15s,opacity .2s;box-shadow:0 8px 20px -8px rgba(23,136,136,.7)}
 :root[data-theme="dark"] .go{color:#06241f}
 @media (prefers-color-scheme:dark){:root:not([data-theme="light"]) .go{color:#06241f}}
 .go:hover{transform:translateY(-1px)}
@@ -80,7 +83,7 @@ background:radial-gradient(900px 500px at 8% -10%,rgba(23,136,136,.22),transpare
 .it dd{margin:2px 0 0;font-weight:600;word-break:break-word}
 @media(min-width:640px){.it.wide{grid-column:1/-1}.it.wide dd{white-space:nowrap;word-break:normal;overflow-wrap:normal}}
 .acts{display:flex;flex-wrap:wrap;gap:8px;margin-top:16px;animation:up .5s .5s both}
-.acts button{font:600 .88rem system-ui;color:var(--tx);background:var(--card);border:1px solid var(--bd);border-radius:10px;padding:9px 14px;cursor:pointer}
+.acts button{font:600 .88rem var(--ff-body);color:var(--tx);background:var(--card);border:1px solid var(--bd);border-radius:10px;padding:9px 14px;cursor:pointer}
 .acts button:hover{border-color:var(--pri);color:var(--pri)}
 .stamp{margin-top:12px;font-size:.76rem;color:var(--mut);animation:up .5s .55s both}
 @keyframes up{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:none}}
@@ -106,7 +109,7 @@ body[data-jenis="juara"] .hero{background:linear-gradient(145deg,#06302c,#0b5d5d
 .certsec[hidden]{display:none}
 .chd{display:flex;justify-content:space-between;align-items:center;gap:10px;flex-wrap:wrap;margin-bottom:12px}
 .chd h2{margin:0;font-size:clamp(1.05rem,2vw,1.3rem)}
-.chd button{font:600 .85rem system-ui;color:var(--tx);background:var(--card);border:1px solid var(--bd);border-radius:10px;padding:8px 14px;cursor:pointer}
+.chd button{font:600 .85rem var(--ff-body);color:var(--tx);background:var(--card);border:1px solid var(--bd);border-radius:10px;padding:8px 14px;cursor:pointer}
 .chd button:hover{border-color:var(--pri);color:var(--pri)}
 .shell>*{min-width:0}
 .certwrap{max-width:100%;overflow-x:auto;border-radius:12px;-webkit-overflow-scrolling:touch}
