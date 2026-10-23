@@ -1,4 +1,18 @@
 {
+  "redirects": [
+    {
+      "source": "/(.*)",
+      "has": [{ "type": "host", "value": "hsn2026.vercel.app" }],
+      "destination": "https://nuciteureup.online/$1",
+      "permanent": true
+    },
+    {
+      "source": "/(.*)",
+      "has": [{ "type": "host", "value": "www.nuciteureup.online" }],
+      "destination": "https://nuciteureup.online/$1",
+      "permanent": true
+    }
+  ],
   "headers": [
     {
       "source": "/(.*)",
