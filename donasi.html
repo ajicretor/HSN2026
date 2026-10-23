@@ -221,7 +221,9 @@ async function drawCert(d){
   const img=new Image();img.src=TPL;await img.decode();
   try{await document.fonts.load('italic 700 48px "Playfair Display"')}catch(e){}
   cv.width=img.naturalWidth;cv.height=img.naturalHeight;
-  const c=cv.getContext("2d");c.fillStyle="#fff";c.fillRect(0,0,cv.width,cv.height);c.drawImage(img,0,0);c.textAlign="center";c.textBaseline="alphabetic";
+  const c=cv.getContext("2d");c.fillStyle="#fff";c.fillRect(0,0,cv.width,cv.height);c.drawImage(img,0,0);
+  c.drawImage(img,587,278,42,10,587,294,42,10);   // hapus garis kosong "____" di template (salin latar bersih dari atasnya)
+  c.textAlign="center";c.textBaseline="alphabetic";
   c.fillStyle="#1b1b1b";c.font='italic 700 21px Arial,"Segoe UI",sans-serif';
   c.fillText(String(d.no||"").split("/")[0].trim(),609,294);              // isi blank pada "Nomor: ___/PAN-HSN/..."
   const nm=String(d.nama||"Hamba Allah");let fs=52;c.fillStyle="#7a5410";
