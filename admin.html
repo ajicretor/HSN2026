@@ -17,6 +17,7 @@ button{font:inherit;cursor:pointer;touch-action:manipulation}input,textarea,sele
 .btn:hover{transform:translateY(-1px);border-color:var(--t);box-shadow:var(--sh)}.btn:active{transform:scale(.97)}
 .btn.p{background:linear-gradient(135deg,var(--t),var(--g2));color:#fff;border-color:transparent}.btn.d{color:var(--danger)}.btn.d:hover{border-color:var(--danger)}
 .btn:disabled{opacity:.55;pointer-events:none}.btn.s{padding:7px 12px;font-size:.82rem;border-radius:10px}
+.ca .btn.s{white-space:nowrap;flex:1 1 auto;justify-content:center;padding:7px 10px;font-size:.8rem}
 .spin{width:16px;height:16px;border-radius:50%;border:2.5px solid currentColor;border-right-color:transparent;animation:rot .7s linear infinite}@keyframes rot{to{transform:rotate(360deg)}}
 /* login */
 #login{min-height:100vh;display:grid;grid-template-columns:1.1fr 1fr}
@@ -189,7 +190,7 @@ async function loadStatic(force){
  }catch(e){["Berita","Tokoh","Struktur","Banom","Lomba","KegHSN"].forEach(k=>ST[k]=ST[k]||[])}}
 async function load(force){busy=true;render(true);const sp=loadStatic(force);try{const d=await api("all");D.Berita=d.berita;D.Tokoh=d.tokoh;D.Galeri=d.galeri;D.Struktur=d.struktur||[];D.Banom=d.banom||[];D.Lomba=d.lomba||[];D.KegHSN=d.keghsn||[];if(me.peran==="admin")D.Pengguna=await api("users")}catch(e){toast(e.message,1)}busy=false;render();sp.then(()=>{if(me&&!busy)render()});if(me.peran==="admin")api("stats",{days:7}).then(d=>{TS=d;if(tab==="ringkas")render()}).catch(()=>{});if(force)toast("Data dimuat ulang")}
 function segDraw(){const s=$("seg"),ok=S[tab]&&stF(tab);s.hidden=!ok;if(!ok)return;const a=D[tab].length,b=stF(tab).length;
- s.replaceChildren(...[["semua","Semua",a+b],["cms","Dari CMS",a],["bawaan","Bawaan situs",b]].map(x=>h("button",{type:"button",class:"sg","aria-pressed":flt===x[0],onclick:()=>{flt=x[0];segDraw();fill()}},x[1],h("b",{text:x[2]}))),h("span",{class:"sgn",text:"“Bawaan situs” adalah konten yang tertanam di index.html. Untuk mengubahnya, edit file situsnya; item dari CMS bisa diedit di sini."}))}
+ s.replaceChildren(...[["semua","Semua",a+b],["cms","Dari CMS",a],["bawaan","Bawaan situs",b]].map(x=>h("button",{type:"button",class:"sg","aria-pressed":flt===x[0],onclick:()=>{flt=x[0];segDraw();fill()}},x[1],h("b",{text:x[2]}))),h("span",{class:"sgn",text:"“Bawaan situs” adalah konten bawaan di index.html. Klik “Impor ke CMS” pada kartunya untuk menyalinnya ke CMS agar bisa diedit; item dari CMS bisa diedit langsung di sini."}))}
 /* ---------- render ---------- */
 function render(sk){
  const list=S[tab]||tab==="Pengguna";$("sr").hidden=!list;$("add").hidden=!list||(tab==="Pengguna"&&me.peran!=="admin");$("fab").hidden=$("add").hidden;segDraw();
