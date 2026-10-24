@@ -122,6 +122,7 @@ body[data-jenis="juara"] .hero{background:linear-gradient(145deg,#06302c,#0b5d5d
 .c-no{top:38.2%;font:italic 700 1.38cqw "Segoe UI",Calibri,Arial,sans-serif}
 .c-nm{top:47.3%;font:italic 700 2.97cqw "Playfair Display",Georgia,serif;color:var(--c2)}
 .c-kt{top:57.3%;font:700 1.79cqw Cinzel,Georgia,serif;letter-spacing:.06em;color:var(--c1);text-transform:uppercase}
+.c-kd{left:10.5%;right:auto;text-align:left;top:72.6%;font:700 1.15cqw "Courier New",Menlo,Consolas,monospace;letter-spacing:.04em;color:#2b2b2b}
 .c-ds{top:65.2%;font:700 1.45cqw/1.87cqw "Segoe UI",Calibri,Candara,Arial,sans-serif}
 .cnote{font-size:.78rem;color:var(--mut);margin:10px 0 0}
 #lb{position:fixed;inset:0;z-index:60;background:rgba(5,15,12,.88);display:none;overflow:auto;padding:16px;cursor:zoom-out}
@@ -215,6 +216,7 @@ function certHtml(d,jr,rk){
   ${d.no?`<div class="ct c-no">Nomor: ${esc(d.no)}</div>`:""}
   <div class="ct c-nm" style="font-size:${nameSize(nm)}cqw">${esc(nm)}</div>
   ${d.kategori?`<div class="ct c-kt">Kategori ${esc(d.kategori)}</div>`:""}
+  ${d.kode?`<div class="ct c-kd">Kode verifikasi: ${esc(d.kode)}</div>`:""}
   <div class="ct c-ds" ${sc<1?`style="font-size:${(1.45*sc).toFixed(3)}cqw"`:""}>${L.map(esc).join("<br>")}</div></div>`;
 }
 /* ===== Unduh sertifikat (PNG / PDF) — digambar ulang ke canvas, tanpa server ===== */
@@ -236,6 +238,8 @@ async function renderCanvas(d,jr,rk){
   if(d.kategori){const k=p(1.79);T(("Kategori "+d.kategori).toUpperCase(),57.3*H/100,k,"700","Cinzel,Georgia,serif",c1,.06*k)}
   const L=certLines(d,jr,rk),fs=p(1.45*descScale(L)),lh=p(1.87);
   L.forEach((t,i)=>T(t,65.2*H/100+(i-1)*lh,fs,"700",'"Segoe UI",Calibri,Candara,Arial,sans-serif',"#141414"));
+  if(d.kode){const k=p(1.15);x.font='700 '+k+'px "Courier New",Menlo,Consolas,monospace';x.fillStyle="#2b2b2b";x.textAlign="left";x.textBaseline="middle";
+    if("letterSpacing" in x)x.letterSpacing=(.04*k)+"px";x.fillText("Kode verifikasi: "+d.kode,W*.105,72.6*H/100+H*.002)}
   return c;
 }
 function jpegToPdf(jb,w,h,pw,ph){
