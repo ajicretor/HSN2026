@@ -42,7 +42,7 @@ button{font:inherit;cursor:pointer;touch-action:manipulation}input,textarea,sele
 .mo{display:none}a.nv,a.sc,a.btn{text-decoration:none}.sp{flex:1}.usr{display:flex;gap:10px;align-items:center;padding:12px;border-radius:14px;background:rgba(255,255,255,.08)}
 .av{flex:none;width:38px;height:38px;border-radius:50%;background:var(--gold);color:#3b2800;display:grid;place-items:center;font-weight:800}.usr .av{flex:none;width:38px}.usr div:not(.av){min-width:0;flex:1;line-height:1.25}.usr b,.usr small{display:block;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}.usr small{opacity:.7;font-size:.76rem}
 .row2{display:flex;gap:8px}.row2 .nv{flex:1;justify-content:center;padding:9px;font-size:.84rem}
-.brand{gap:8px;padding-right:2px}.brand>div{min-width:0}.brand b{white-space:nowrap}.sbt{margin-left:auto;flex:none;display:grid;place-items:center;width:34px;height:34px;border:0;border-radius:10px;background:rgba(255,255,255,.1);color:#fff;cursor:pointer;transition:background .2s}
+.brand{gap:8px;padding-right:2px}.brand>div{min-width:0}.card[draggable=true]{cursor:grab}.card.dov{outline:2px dashed var(--t);outline-offset:3px}.brand b{white-space:nowrap}.sbt{margin-left:auto;flex:none;display:grid;place-items:center;width:34px;height:34px;border:0;border-radius:10px;background:rgba(255,255,255,.1);color:#fff;cursor:pointer;transition:background .2s}
 .sbt:hover{background:rgba(255,255,255,.22)}.sbt:focus-visible{outline:2px solid var(--gold);outline-offset:2px}
 @media(min-width:861px){
 .shell{transition:grid-template-columns .25s ease}
@@ -188,7 +188,7 @@ async function loadStatic(force){
   ST.KegHSN=[...d.querySelectorAll("#hsn .acts .act")].map((e,i)=>({id:"s"+i,judul:tx(e,"h3"),deskripsi:tx(e,"p")}));
  }catch(e){["Berita","Tokoh","Struktur","Banom","Lomba","KegHSN"].forEach(k=>ST[k]=ST[k]||[])}}
 async function load(force){busy=true;render(true);const sp=loadStatic(force);try{const d=await api("all");D.Berita=d.berita;D.Tokoh=d.tokoh;D.Galeri=d.galeri;D.Struktur=d.struktur||[];D.Banom=d.banom||[];D.Lomba=d.lomba||[];D.KegHSN=d.keghsn||[];if(me.peran==="admin")D.Pengguna=await api("users")}catch(e){toast(e.message,1)}busy=false;render();sp.then(()=>{if(me&&!busy)render()});if(me.peran==="admin")api("stats",{days:7}).then(d=>{TS=d;if(tab==="ringkas")render()}).catch(()=>{});if(force)toast("Data dimuat ulang")}
-function segDraw(){const s=$("seg"),ok=S[tab]&&ST[tab];s.hidden=!ok;if(!ok)return;const a=D[tab].length,b=ST[tab].length;
+function segDraw(){const s=$("seg"),ok=S[tab]&&stF(tab);s.hidden=!ok;if(!ok)return;const a=D[tab].length,b=stF(tab).length;
  s.replaceChildren(...[["semua","Semua",a+b],["cms","Dari CMS",a],["bawaan","Bawaan situs",b]].map(x=>h("button",{type:"button",class:"sg","aria-pressed":flt===x[0],onclick:()=>{flt=x[0];segDraw();fill()}},x[1],h("b",{text:x[2]}))),h("span",{class:"sgn",text:"“Bawaan situs” adalah konten yang tertanam di index.html. Untuk mengubahnya, edit file situsnya; item dari CMS bisa diedit di sini."}))}
 /* ---------- render ---------- */
 function render(sk){
@@ -203,25 +203,37 @@ function render(sk){
 function fill(){const g=$("gr");if(!g)return;const s=q.toLowerCase();let rows=[];
  if(tab==="Pengguna")rows=D.Pengguna.filter(r=>(r.nama+r.username).toLowerCase().includes(s)).map((r,i)=>uCard(r,i));
  else{const c=S[tab],m=r=>((r[c.title]||"")+(r[c.sub]||"")).toLowerCase().includes(s);
-  const cm=flt!=="bawaan"?D[tab].filter(m).map((r,i)=>card(r,i)):[],st=(ST[tab]&&flt!=="cms")?ST[tab].filter(m).map((r,i)=>sCard(r,tab,i+cm.length)):[];rows=cm.concat(st)}
+  const cm=flt!=="bawaan"?D[tab].filter(m).map((r,i)=>card(r,i)):[],st=(stF(tab)&&flt!=="cms")?stF(tab).filter(m).map((r,i)=>sCard(r,tab,i+cm.length)):[];rows=cm.concat(st)}
  g.replaceChildren(...(rows.length?rows:[h("div",{class:"emp"},ic(S[tab]?S[tab].ic:"users",30),h("b",{text:q?"Tidak ada hasil":"Belum ada data"}),h("span",{text:q?"Coba kata kunci lain.":"Klik “Tambah” untuk mulai."}))]))}
 function sCard(r,t,i){const c=S[t];
  const md=c.img?h("div",{class:"md"},r.src?h("img",{src:r.src,alt:"",loading:"lazy"}):h("span",{class:"ph"},ic(c.ic,TK(t)?40:34))):null;
  const act=[h("a",{class:"btn s",href:"index.html#"+SEC[t],target:"_blank",rel:"noopener"},ic("ext",16),h("span",{text:"Lihat di situs"}))];
  if(t==="Banom"&&me.peran==="admin")act.unshift(h("button",{class:"btn s",onclick:()=>openForm("Banom",{nama:r.nama,label:r.label,deskripsi:r.deskripsi,ketua:r.ketua||""})},ic("edit",16),h("span",{text:"Isi data ketua"})));
+ else if(TT[t]&&me.peran==="admin")act.unshift(h("button",{class:"btn s",onclick:()=>impor(t,r)},ic("edit",16),h("span",{text:"Impor ke CMS"})));
  const ds=r.deskripsi&&!(c.sub2&&c.sub2[0]==="deskripsi");
  return h("article",{class:"card sx"+(TK(t)?" tk":""),style:"--i:"+Math.min(i,12)},md,h("div",{class:"cb"},h("span",{class:"chip a",text:"Bawaan situs"}),h("b",{text:r[c.title]||"(tanpa judul)"}),c.sub?h("small",{text:r[c.sub]||""}):null,c.sub2&&r[c.sub2[0]]?h("small",{text:c.sub2[1]+r[c.sub2[0]]}):null,ds?h("small",{text:r.deskripsi}):null),h("div",{class:"ca"},...act))}
+const TT={Berita:"judul",Tokoh:"nama",Struktur:"nama",Lomba:"nama",KegHSN:"judul"};
+/* konten bawaan yang sudah punya salinan di CMS (judul/nama sama) disembunyikan dari daftar bawaan */
+function stF(t){const L=ST[t];if(!L||!TT[t])return L;const k=TT[t],s=new Set((D[t]||[]).map(r=>nmz(r[k])));return L.filter(r=>!s.has(nmz(r[k])))}
+async function impor(t,r){try{const d={...r};delete d.id;delete d.src;const c=S[t];
+ if(c.img&&r.src){toast("Menyalin foto…");const b=await(await fetch(r.src)).blob();const data=await new Promise(ok=>{const fr=new FileReader();fr.onload=()=>ok(fr.result.split(",")[1]);fr.readAsDataURL(b)});d[c.img]=(await api("upload",{mime:b.type||"image/webp",data})).id}
+ openForm(t,d)}catch(e){toast("Gagal menyalin: "+e.message,1)}}
+let DR=null;
+async function reorder(t,a,b){if(!a||a===b)return;const L=(D[t]||[]).slice().sort((x,y)=>(+x.urutan||999)-(+y.urutan||999));
+ const i=L.findIndex(r=>r.id===a),j=L.findIndex(r=>r.id===b);if(i<0||j<0)return;L.splice(j,0,L.splice(i,1)[0]);
+ try{for(let k=0;k<L.length;k++)if(String(L[k].urutan)!==String(k+1))await api("save",{type:t,item:{...L[k],urutan:String(k+1)}});toast("Urutan disimpan");await load()}catch(e){toast(e.message,1)}}
 function card(r,i,t){t=t||tab;const c=S[t],u=r[c.img];
  const md=c.img?h("div",{class:"md"},u?h("img",{src:IMG(u)+"500",alt:"",loading:"lazy"}):h("span",{class:"ph"},ic(c.ic,TK(t)?40:34))):null;
  if(t==="Galeri")md.append(h("div",{class:"cap",text:r.caption||""}));
  const body=h("div",{class:"cb"},h("span",{class:"chip g",text:"✓ Tayang · CMS"}),h("b",{text:r[c.title]||"(tanpa judul)"}),c.sub?h("small",{text:r[c.sub]||""}):null,c.sub2&&r[c.sub2[0]]?h("small",{text:c.sub2[1]+r[c.sub2[0]]}):null,h("small",{text:r.penulis?"oleh "+r.penulis:""}));
  const el=h("article",{class:"card"+(t==="Galeri"?" sq":"")+(TK(t)?" tk":""),style:"--i:"+Math.min(i,12)},md,t==="Galeri"?null:body);
+ if(me.peran==="admin"&&S[t].f.some(x=>x[0]==="urutan")){el.draggable=true;el.title="Seret untuk mengubah urutan";el.ondragstart=e=>{DR=r.id;e.dataTransfer.effectAllowed="move"};el.ondragover=e=>{e.preventDefault();el.classList.add("dov")};el.ondragleave=()=>el.classList.remove("dov");el.ondrop=e=>{e.preventDefault();el.classList.remove("dov");reorder(t,DR,r.id)}}
  if(me.peran==="admin")el.append(h("div",{class:"ca"},h("button",{class:"btn s",onclick:()=>openForm(t,r)},ic("edit",16),h("span",{text:"Edit"})),h("button",{class:"btn s d",onclick:()=>del(t,r)},ic("trash",16),h("span",{text:"Hapus"}))));else el.append(h("div",{class:"ca"},h("a",{class:"btn s",href:"index.html#"+SEC[t],target:"_blank",rel:"noopener"},ic("ext",16),h("span",{text:"Lihat di situs"}))));return el}
 function uCard(r,i){const el=h("article",{class:"card",style:"--i:"+Math.min(i,12)},h("div",{class:"cb",style:"flex-direction:row;align-items:center;gap:12px"},h("div",{class:"av",text:ini(r.nama)}),h("div",{style:"min-width:0;flex:1"},h("b",{text:r.nama}),h("small",{text:"@"+r.username,style:"display:block"})),h("span",{class:"chip"+(r.peran==="admin"?" a":""),text:r.peran})),
  h("div",{class:"cb",style:"padding-top:0"},h("small",{text:r.aktif==="ya"?"● Aktif":"○ Nonaktif"})),h("div",{class:"ca"},h("button",{class:"btn s",onclick:()=>openForm("Pengguna",r)},ic("edit",16),h("span",{text:"Edit"}))));return el}
 const nmz=s=>String(s||"").toLowerCase().replace(/[’`´]/g,"'").replace(/\s+/g," ").trim();
 const COL={Berita:"var(--t)",Tokoh:"#b8860b",Galeri:"#7a5cc8",Struktur:"#2f7d5b",Banom:"#c47a1d",Lomba:"#a23fb0",KegHSN:"#2b7de0"};
-function cnt(t){const st=ST[t]||[],cm=D[t]||[];let ov=0;if(t==="Banom"){const nm=new Set(st.map(x=>nmz(x.nama)));ov=cm.filter(r=>nm.has(nmz(r.nama))).length}return{st:st.length,cm:cm.length,ov,tot:st.length+cm.length-ov}}
+function cnt(t){const st=stF(t)||[],cm=D[t]||[];let ov=0;if(t==="Banom"){const nm=new Set(st.map(x=>nmz(x.nama)));ov=cm.filter(r=>nm.has(nmz(r.nama))).length}return{st:st.length,cm:cm.length,ov,tot:st.length+cm.length-ov}}
 function tglId(s){const d=new Date(s);return isNaN(d)?"":d.getDate()+" "+BLN[d.getMonth()]+" "+d.getFullYear()}
 function dash(v){
  const adm=me.peran==="admin",hr=new Date().getHours(),g=hr<11?"Selamat pagi":hr<15?"Selamat siang":hr<18?"Selamat sore":"Selamat malam";
@@ -236,7 +248,7 @@ function dash(v){
  const sc=h("div",{class:"st"},...cards);
  /* terbaru: CMS dulu, lalu konten bawaan situs */
  const cmsAll=CT.flatMap(t=>D[t].map(r=>({t,r,cms:1}))).sort((a,b)=>String(b.r.dibuat).localeCompare(String(a.r.dibuat)));
- const stAll=["Berita","Tokoh"].filter(t=>CT.includes(t)).flatMap(t=>(ST[t]||[]).map(r=>({t,r,cms:0})));
+ const stAll=["Berita","Tokoh"].filter(t=>CT.includes(t)).flatMap(t=>(stF(t)||[]).map(r=>({t,r,cms:0})));
  const list=cmsAll.concat(stAll).slice(0,8);
  const rowT=({t,r,cms})=>{const c=S[t],u=cms&&c.img?r[c.img]:"",src=u?IMG(u)+"120":(!cms?r.src:"");
   const meta=[c.label,cms?(r.penulis?"oleh "+r.penulis:""):"bawaan situs",cms?tglId(r.dibuat):""].filter(Boolean).join(" · ");
