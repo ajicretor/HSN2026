@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html lang="id"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<meta http-equiv="Content-Security-Policy" content="default-src 'none'; script-src 'unsafe-inline'; style-src 'unsafe-inline'; img-src data: blob: https://lh3.googleusercontent.com; connect-src https://script.google.com https://script.googleusercontent.com; base-uri 'none'; form-action 'none'">
+<meta name="robots" content="noindex"><title>CMS · MWC NU Citeureup</title>
+<style>
+:root{--g:#0b4a43;--t:#118b7f;--bg:#f1f5f3;--ink:#10231f;--mut:#58706a;--ln:#d5e0dc;--gold:#e0a526}
+@media(prefers-color-scheme:dark){:root{--bg:#0d1b18;--ink:#e6f1ed;--mut:#9db5ae;--ln:#294039}}
+*{box-sizing:border-box}body{margin:0;font:16px/1.5 system-ui,sans-serif;background:var(--bg);color:var(--ink)}
+header{background:var(--g);color:#fff;padding:12px 18px;display:flex;gap:12px;align-items:center;flex-wrap:wrap}
+header b{font-size:1.05rem;margin-right:auto}header span{font-size:.85rem;opacity:.85}
+main{max-width:980px;margin:0 auto;padding:18px}
+.card{background:color-mix(in srgb,var(--bg) 40%,#fff 0%);border:1px solid var(--ln);border-radius:14px;padding:18px;margin-bottom:16px;background:var(--bg)}
+#login{max-width:380px;margin:8vh auto}
+h2,h3{margin:0 0 12px}label{display:block;font-size:.85rem;color:var(--mut);margin:10px 0 4px}
+input,select,textarea{width:100%;padding:10px 12px;font:inherit;color:inherit;background:transparent;border:1px solid var(--ln);border-radius:10px}
+textarea{min-height:110px;resize:vertical}
+button{font:600 .9rem system-ui;padding:9px 16px;border-radius:999px;border:1.5px solid var(--t);background:transparent;color:var(--t);cursor:pointer}
+button.p{background:var(--t);color:#fff}button.d{border-color:#b3261e;color:#b3261e}button:disabled{opacity:.5}
+nav{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:16px}nav button[aria-selected=true]{background:var(--g);border-color:var(--g);color:#fff}
+.row{display:flex;gap:12px;align-items:center;padding:10px 0;border-top:1px solid var(--ln)}.row:first-child{border:0}
+.row img{width:56px;height:56px;border-radius:10px;object-fit:cover;background:var(--ln);flex:none}
+.row div{flex:1;min-width:0}.row small{color:var(--mut);display:block;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.pv{width:120px;height:90px;object-fit:cover;border-radius:10px;margin-top:8px;display:block}
+#msg{position:fixed;left:50%;bottom:18px;transform:translateX(-50%);background:var(--g);color:#fff;padding:10px 18px;border-radius:12px;max-width:92vw;display:none}
+#msg.err{background:#b3261e}.bar{display:flex;gap:8px;margin-top:14px;flex-wrap:wrap}.hint{font-size:.8rem;color:var(--mut)}
+</style></head><body>
+<header><b>CMS · MWC NU Citeureup</b><span id="who"></span><button id="out" hidden style="color:#fff;border-color:#fff">Keluar</button></header>
+<main>
+<section id="login" class="card"><h2>Masuk CMS</h2><p class="hint">Masuk sebagai admin atau kontributor.</p>
+<label for="u">Nama pengguna</label><input id="u" autocomplete="username" autocapitalize="none">
+<label for="p">Kata sandi</label><input id="p" type="password" autocomplete="current-password">
+<div class="bar"><button class="p" id="go">Masuk</button></div></section>
+<section id="app" hidden><nav id="tabs" role="tablist"></nav><div id="form" class="card"></div><div id="list" class="card"></div></section>
+</main><div id="msg" role="status"></div>
+<script>
+const API="https://script.google.com/macros/s/AKfycbyvNfvjCxiVM4ftqOHJGw5wkZW0GmXPg4wqTadEnuciAqA8ik39KwJoErIo10cP3RkwrQ/exec"; // URL /exec dari Apps Script
+const IMG=id=>"https://lh3.googleusercontent.com/d/"+id+"=w";
+const S={
+ Berita:{label:"Berita / kegiatan",title:"judul",sub:"tanggal",img:"gambar",f:[["judul","Judul"],["tanggal","Tanggal / waktu","","Contoh: Minggu, 27 Juli 2025"],["keterangan","Lokasi / keterangan"],["deskripsi","Deskripsi singkat","area"],["gambar","Foto","img"]]},
+ Tokoh:{label:"Profil tokoh",title:"nama",sub:"jabatan",img:"foto",f:[["nama","Nama lengkap & gelar"],["jabatan","Jabatan"],["profil","Profil lengkap","area","Pisahkan paragraf dengan satu baris kosong"],["foto","Foto","img"],["urutan","Urutan tampil (angka kecil tampil lebih dulu)","num"]]},
+ Galeri:{label:"Galeri foto",title:"caption",sub:"",img:"gambar",f:[["gambar","Foto","img"],["caption","Keterangan foto"]]},
+ Pengguna:{label:"Pengguna",admin:1}};
+let T=null,me=null,tab="Berita",data={},edit=null;
+const $=id=>document.getElementById(id),el=(t,p,...c)=>{const e=document.createElement(t);Object.assign(e,p||{});e.append(...c);return e};
+function toast(m,err){const x=$("msg");x.textContent=m;x.className=err?"err":"";x.style.display="block";clearTimeout(toast.t);toast.t=setTimeout(()=>x.style.display="none",4200)}
+async function api(a,b){
+ if(!/^https:\/\/script\.google\.com\//.test(API))throw new Error("URL API belum diisi di admin.html");
+ const r=await fetch(API,{method:"POST",headers:{"Content-Type":"text/plain;charset=utf-8"},body:JSON.stringify(Object.assign({action:a,t:T},b))});
+ const j=await r.json();if(!j.ok){if(/Sesi berakhir/.test(j.err))logout(true);throw new Error(j.err)}return j.data}
+function logout(k){T=me=null;sessionStorage.removeItem("cms");$("app").hidden=true;$("login").hidden=false;$("out").hidden=true;$("who").textContent="";if(k)toast("Sesi berakhir, silakan masuk lagi.",1)}
+async function login(){const b=$("go");b.disabled=true;
+ try{const d=await api("login",{u:$("u").value,p:$("p").value});$("p").value="";start(d)}catch(e){toast(e.message,1)}b.disabled=false}
+function start(d){T=d.token;me=d;sessionStorage.setItem("cms",JSON.stringify(d));$("login").hidden=true;$("app").hidden=false;$("out").hidden=false;
+ $("who").textContent=d.nama+" · "+d.peran;tab="Berita";tabs();load()}
+function tabs(){const n=$("tabs");n.replaceChildren(...Object.keys(S).filter(k=>!S[k].admin||me.peran==="admin").map(k=>{
+ const b=el("button",{type:"button",role:"tab",textContent:S[k].label});b.setAttribute("aria-selected",k===tab);b.onclick=()=>{tab=k;edit=null;tabs();load()};return b}))}
+async function load(){try{if(tab==="Pengguna"){data.Pengguna=await api("users")}else{const d=await api("all");data={Berita:d.berita,Tokoh:d.tokoh,Galeri:d.galeri,Pengguna:data.Pengguna}}}catch(e){toast(e.message,1)}draw()}
+function resize(file){return new Promise((ok,no)=>{const im=new Image();im.onload=()=>{const m=1400,k=Math.min(1,m/Math.max(im.width,im.height)),c=document.createElement("canvas");
+ c.width=Math.round(im.width*k);c.height=Math.round(im.height*k);c.getContext("2d").drawImage(im,0,0,c.width,c.height);URL.revokeObjectURL(im.src);ok(c.toDataURL("image/jpeg",.84).split(",")[1])};
+ im.onerror=()=>no(new Error("File bukan gambar"));im.src=URL.createObjectURL(file)})}
+function field(f,v,vals){const [k,lb,ty,hint]=f,id="f_"+k;let i;
+ if(ty==="img"){const h=el("input",{type:"hidden",id,value:v||""}),pv=el("img",{className:"pv",alt:"",hidden:!v}),fi=el("input",{type:"file",accept:"image/jpeg,image/png,image/webp"});
+  if(v)pv.src=IMG(v)+"300";fi.onchange=async()=>{if(!fi.files[0])return;try{toast("Mengunggah foto…");const id2=await api("upload",{mime:"image/jpeg",data:await resize(fi.files[0])});h.value=id2;pv.src=IMG(id2)+"300";pv.hidden=false;toast("Foto terunggah")}catch(e){toast(e.message,1)}};
+  return el("div",{},el("label",{textContent:lb}),fi,pv,h)}
+ i=ty==="area"?el("textarea",{id,value:v||""}):el("input",{id,value:v||"",type:ty==="num"?"number":"text"});
+ return el("div",{},el("label",{htmlFor:id,textContent:lb}),i,...(hint?[el("div",{className:"hint",textContent:hint})]:[]))}
+function draw(){tab==="Pengguna"?drawUsers():drawContent()}
+function drawContent(){const s=S[tab],it=edit||{};const f=$("form");f.replaceChildren(el("h3",{textContent:(edit?"Edit ":"Tambah ")+s.label}),...s.f.map(x=>field(x,it[x[0]])));
+ const sv=el("button",{className:"p",textContent:edit?"Simpan perubahan":"Terbitkan"});sv.onclick=async()=>{sv.disabled=true;try{const o={};s.f.forEach(x=>o[x[0]]=$("f_"+x[0]).value);if(edit)o.id=edit.id;
+  await api("save",{type:tab,item:o});toast(edit?"Perubahan disimpan":"Berhasil terbit di landing page");edit=null;await load()}catch(e){toast(e.message,1)}sv.disabled=false};
+ f.append(el("div",{className:"bar"},sv,...(edit?[Object.assign(el("button",{textContent:"Batal"}),{onclick:()=>{edit=null;draw()}})]:[])));
+ const L=$("list");L.replaceChildren(el("h3",{textContent:"Daftar ("+(data[tab]||[]).length+")"}));
+ (data[tab]||[]).forEach(r=>{const row=el("div",{className:"row"},el("img",{alt:"",src:r[s.img]?IMG(r[s.img])+"120":"data:,"}),el("div",{},el("b",{textContent:r[s.title]||"(tanpa judul)"}),el("small",{textContent:[s.sub&&r[s.sub],r.penulis&&"oleh "+r.penulis].filter(Boolean).join(" · ")})));
+  if(me.peran==="admin"){const e=el("button",{textContent:"Edit"}),d=el("button",{className:"d",textContent:"Hapus"});e.onclick=()=>{edit=r;draw();scrollTo({top:0,behavior:"smooth"})};
+   d.onclick=async()=>{if(!confirm("Hapus item ini dari landing page?"))return;try{await api("del",{type:tab,id:r.id});toast("Dihapus");await load()}catch(x){toast(x.message,1)}};row.append(e,d)}
+  L.append(row)});if(me.peran!=="admin")L.append(el("p",{className:"hint",textContent:"Sebagai kontributor, kiriman Anda langsung tayang. Edit dan hapus dilakukan oleh admin."}))}
+function drawUsers(){const it=edit||{aktif:"ya",peran:"kontributor"},f=$("form");
+ const sel=(id,lb,opts,v)=>el("div",{},el("label",{htmlFor:id,textContent:lb}),Object.assign(el("select",{id},...opts.map(o=>el("option",{value:o[0],textContent:o[1],selected:o[0]===v}))),{}));
+ f.replaceChildren(el("h3",{textContent:edit?"Edit pengguna":"Tambah pengguna"}),
+  el("div",{},el("label",{htmlFor:"f_username",textContent:"Nama pengguna (huruf kecil)"}),el("input",{id:"f_username",value:it.username||"",readOnly:!!edit})),
+  el("div",{},el("label",{htmlFor:"f_nama",textContent:"Nama lengkap"}),el("input",{id:"f_nama",value:it.nama||""})),
+  sel("f_peran","Peran",[["kontributor","Kontributor (langsung tayang)"],["admin","Admin (kelola semuanya)"]],it.peran),
+  sel("f_aktif","Status",[["ya","Aktif"],["tidak","Nonaktif"]],it.aktif),
+  el("div",{},el("label",{htmlFor:"f_password",textContent:edit?"Kata sandi baru (kosongkan jika tidak diganti)":"Kata sandi (min. 8 karakter)"}),el("input",{id:"f_password",type:"password",autocomplete:"new-password"})));
+ const sv=el("button",{className:"p",textContent:"Simpan"});sv.onclick=async()=>{sv.disabled=true;try{await api("usersave",{username:$("f_username").value,nama:$("f_nama").value,peran:$("f_peran").value,aktif:$("f_aktif").value,password:$("f_password").value});
+  toast("Pengguna disimpan");edit=null;await load()}catch(e){toast(e.message,1)}sv.disabled=false};f.append(el("div",{className:"bar"},sv));
+ const L=$("list");L.replaceChildren(el("h3",{textContent:"Daftar pengguna"}));
+ (data.Pengguna||[]).forEach(r=>{const e=el("button",{textContent:"Edit"});e.onclick=()=>{edit=r;draw();scrollTo({top:0,behavior:"smooth"})};
+  L.append(el("div",{className:"row"},el("div",{},el("b",{textContent:r.nama+" ("+r.username+")"}),el("small",{textContent:r.peran+" · "+(r.aktif==="ya"?"aktif":"nonaktif")})),e))})}
+$("go").onclick=login;$("p").addEventListener("keydown",e=>{if(e.key==="Enter")login()});$("out").onclick=()=>logout();
+try{const s=JSON.parse(sessionStorage.getItem("cms")||"null");if(s&&s.token)start(s)}catch(e){}
+</script></body></html>
