@@ -522,17 +522,6 @@ footer{padding-bottom:calc(14px + env(safe-area-inset-bottom,0px))}
 .la-note{margin-top:24px;padding-top:12px;border-top:1px solid #d5ddd9;font-size:.82rem;color:#555}.la-note p{margin:0 0 4px}
 .la-ft{margin-top:14px;display:flex;justify-content:flex-end;gap:10px;flex-wrap:wrap}
 @media(max-width:560px){.la-paper{padding:20px 12px;font-size:13px}.la-r .v,.la-d .v,.la-i .v{min-width:92px}.la-i{padding-left:34px}}
-.la-d{background:none;border:0;border-radius:0;padding:0;margin:0}
-.la-d summary{display:flex;grid-template-columns:none;padding:1px 0 1px 28px;font-weight:400;font-size:inherit;color:inherit}.la-d summary::after{content:none}
-.la-logo{display:block;margin:0 auto 10px;height:64px;width:auto}
-.la-sec{margin:26px 0 8px;padding-bottom:4px;border-bottom:2px solid #111;font:700 .95rem Arial,Helvetica,sans-serif;letter-spacing:.02em;color:#111}
-.ju-w{overflow-x:auto}.ju{width:100%;border-collapse:collapse;font-size:.88em}
-.ju th,.ju td{border:1px solid #9aa5a0;padding:4px 8px;vertical-align:top}.ju thead th{background:#eef2f0;text-align:left;font-weight:700}
-.ju .v{text-align:right;white-space:nowrap}.ju .c{text-align:center;white-space:nowrap;color:#444}.ju .k{padding-left:28px}.ju td[rowspan]{white-space:nowrap;font-weight:600}
-.ju tr.e td{border-bottom-color:#d5ddd9}.ju tfoot td{font-weight:700;background:#f4f7f5;border-top:2px solid #111}
-.la-cek{margin:8px 0 0;font-size:.82rem;color:#555}.la-cek.ok{color:#17795a}.la-cek.bad{color:#b4432d;font-weight:700}
-.la-sign{display:grid;grid-template-columns:repeat(3,1fr);gap:16px;margin-top:30px;text-align:center;font-size:.86rem}.la-sign span{display:block}.la-sign i{display:block;height:64px;border-bottom:1px solid #111;margin:0 12%}.la-sign b{display:block;margin-top:4px}
-@media(max-width:560px){.la-sign{grid-template-columns:1fr}.la-sign i{height:44px}}
 </style>
 </head>
 <body>
@@ -918,26 +907,12 @@ function view(d){
   const tgl=new Date().toLocaleDateString("id-ID",{day:"numeric",month:"long",year:"numeric"});
   const L=(t,a,o)=>'<div class="la-r'+(o?" "+o:"")+'"><span class="t">'+t+'</span><span class="v">'+a+'</span></div>';
   const rows=d.cats.map(c=>{const s=csum(c);return '<details class="la-d"><summary><span class="t">'+esc(c.n)+'</span><span class="v">'+num(s)+'</span></summary>'+c.items.map(x=>'<div class="la-i"><span class="t">'+esc(x.n)+'</span><span class="v">'+num(x.amt)+'</span></div>').join("")+'</details>'}).join("");
-  const kd=i=>"5.0"+(i+1);let no=0;const nj=()=>"JU-"+String(++no).padStart(3,"0");
-  const E=(n,a1,r1,db,a2,r2,kr)=>'<tr class="e"><td rowspan="2">'+n+'</td><td>'+a1+'</td><td class="c">'+r1+'</td><td class="v">'+db+'</td><td class="v"></td></tr><tr><td class="k">'+a2+'</td><td class="c">'+r2+'</td><td class="v"></td><td class="v">'+kr+'</td></tr>';
-  let jr=E(nj(),"Kas dan Bank","101",num(d.donasi),"Pendapatan Sumbangan — donasi terverifikasi ("+dn+" donatur)","401",num(d.donasi)),td=d.donasi,tk=d.donasi;
-  d.cats.forEach((c,i)=>c.items.forEach(x=>{const a=+x.amt||0;td+=a;tk+=a;jr+=E(nj(),"Beban "+esc(c.n)+" — "+esc(x.n),kd(i),num(a),"Kas dan Bank","101",num(a))}));
-  const T=(a,r,db,kr,o)=>'<tr'+(o?' class="'+o+'"':"")+'><td>'+a+'</td><td class="c">'+r+'</td><td class="v">'+db+'</td><td class="v">'+kr+'</td></tr>';
-  let tb=T("Kas dan Bank","101",sel>=0?num(sel):"",sel<0?num(-sel):""),sd=Math.max(sel,0),sk=Math.max(-sel,0);
-  tb+=T("Pendapatan Sumbangan","401","",num(d.donasi));sk+=d.donasi;
-  d.cats.forEach((c,i)=>{const s=csum(c);sd+=s;tb+=T("Beban "+esc(c.n),kd(i),num(s),"")});
-  const ok=td===tk&&sd===sk;
-  return '<div class="tp"><div class="la-paper"><div class="la-title"><img class="la-logo" src="'+((document.querySelector('img[alt^="Logo Nahdlatul"]')||document.createElement("i")).getAttribute("src")||"")+'" alt="Logo MWC NU Citeureup"><b>MWC NU Citeureup</b><b>Laporan Keuangan Program</b><span>Program: '+esc(d.program)+'</span><span>Per '+tgl+'</span><span>(dalam rupiah)</span><em>Sementara · belum diaudit</em></div>'
-  +'<h4 class="la-sec">I. Laporan Aktivitas</h4><div class="la-h">Perubahan Aktiva Bersih:</div><div class="la-h l1">Pendapatan dan Penghasilan:</div>'
+  return '<div class="tp"><div class="la-paper"><div class="la-title"><b>MWC NU Citeureup</b><b>Laporan Aktivitas</b><span>Program: '+esc(d.program)+'</span><span>Per '+tgl+'</span><span>(dalam rupiah)</span><em>Sementara · belum diaudit</em></div>'
+  +'<div class="la-h">Perubahan Aktiva Bersih:</div><div class="la-h l1">Pendapatan dan Penghasilan:</div>'
   +L('Sumbangan donasi terverifikasi ('+dn+' donatur)','Rp '+num(d.donasi),"l2")+L('Jumlah Pendapatan dan Penghasilan',num(d.donasi),"l1 sub")
   +'<div class="la-h l1">Beban dan Kerugian:</div>'+rows+L('Jumlah Beban dan Kerugian',num(total),"l1 sub")
   +L(sel<0?'Penurunan Aktiva Bersih':'Kenaikan Aktiva Bersih','Rp '+par(sel),"grand")
-  +'<h4 class="la-sec">II. Jurnal Umum</h4><div class="ju-w"><table class="ju"><thead><tr><th>No. Jurnal</th><th>Akun dan uraian</th><th class="c">Kode</th><th class="v">Debit</th><th class="v">Kredit</th></tr></thead><tbody>'+jr+'</tbody><tfoot><tr><td colspan="3">Jumlah</td><td class="v">'+num(td)+'</td><td class="v">'+num(tk)+'</td></tr></tfoot></table></div>'
-  +'<p class="la-cek '+(ok?"ok":"bad")+'">'+(ok?"✓ Jurnal seimbang: jumlah debit sama dengan jumlah kredit.":"⚠ Jurnal belum seimbang, periksa data.")+'</p>'
-  +'<h4 class="la-sec">III. Neraca Saldo</h4><div class="ju-w"><table class="ju"><thead><tr><th>Akun</th><th class="c">Kode</th><th class="v">Debit</th><th class="v">Kredit</th></tr></thead><tbody>'+tb+'</tbody><tfoot><tr><td colspan="2">Jumlah</td><td class="v">'+num(sd)+'</td><td class="v">'+num(sk)+'</td></tr></tfoot></table></div>'
-  +(sel<0?'<p class="la-cek">Saldo Kas dan Bank berada di sisi kredit: pengeluaran sementara melebihi donasi yang masuk.</p>':"")
-  +'<div class="la-note"><p>Informasi lain: target penggalangan dana Rp '+num(d.target)+', tercapai '+dp+'%.</p><p>Disusun mengacu pada format Laporan Aktivitas entitas nirlaba. Angka bersifat sementara dan diperbarui setelah seluruh kegiatan selesai, termasuk penyerahan hadiah lomba. Tanggal dan bukti transaksi belum dimuat pada laporan sementara ini. Laporan ini belum diaudit oleh akuntan publik.</p></div>'
-  +'<div class="la-sign"><div><span>Disusun oleh,</span><i></i><b>Bendahara</b></div><div><span>Diperiksa oleh,</span><i></i><b>Ketua Panitia</b></div><div><span>Disetujui oleh,</span><i></i><b>Ketua MWC NU Citeureup</b></div></div>'
+  +'<div class="la-note"><p>Informasi lain: target penggalangan dana Rp '+num(d.target)+', tercapai '+dp+'%.</p><p>Angka pengeluaran bersifat sementara dan diperbarui setelah seluruh kegiatan selesai, termasuk penyerahan hadiah lomba. Ketuk nama pos beban untuk melihat rinciannya.</p></div>'
   +'<div class="la-ft"><a class="lk-print" style="text-decoration:none;display:inline-block" href="#verifikasi" onclick="var t=document.getElementById(\'t-donasi\');if(t)t.click()">Verifikasi donasi Anda</a> <button type="button" class="lk-print" onclick="document.querySelectorAll(\'#tp-view details\').forEach(function(x){x.open=true});window.print()">Cetak / simpan PDF</button></div></div></div>';
 }
 function draw(){
