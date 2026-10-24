@@ -509,6 +509,19 @@ footer{padding-bottom:calc(14px + env(safe-area-inset-bottom,0px))}
 .lk-print{border:1px solid #0f4a41;background:#fff;color:#0f4a41;border-radius:999px;padding:8px 16px;font:700 .82rem Poppins,"Segoe UI",system-ui,sans-serif;cursor:pointer}.lk-print:hover{background:#0f4a41;color:#fff}
 @media(max-width:560px){.lk-cols,.lk-r,.lk-d summary,.lk-d li{grid-template-columns:1fr auto;padding-left:14px;padding-right:14px}.lk-rep .p{display:none}.lk-d li{padding-left:34px}}
 @media print{body *{visibility:hidden}#transparansi,#transparansi *{visibility:visible}#transparansi{position:absolute;left:0;top:0;width:100%}.lk-print,.tp-btn,.tp-editbtn{display:none!important}}
+.la-paper{background:#fff;border:1px solid #cfd8d4;border-radius:6px;padding:28px clamp(14px,4vw,44px);color:#111;font:14px/1.6 Arial,Helvetica,sans-serif;font-variant-numeric:tabular-nums;box-shadow:0 2px 10px rgba(0,0,0,.05)}
+.la-title{text-align:center;margin-bottom:22px}.la-title b{display:block;font-size:1.08rem}.la-title span{display:block;font-size:.9rem}.la-title em{display:inline-block;margin-top:8px;font-size:.72rem;font-style:normal;font-weight:700;letter-spacing:.05em;text-transform:uppercase;padding:3px 10px;border-radius:99px;background:#fdf3d6;color:#8a6a0a}
+.la-r,.la-d summary,.la-i{display:flex;justify-content:space-between;gap:16px;padding:1px 0}
+.la-r .v,.la-d .v,.la-i .v{min-width:120px;text-align:right;white-space:nowrap}
+.la-h{font-weight:700;margin-top:10px}.l1{padding-left:14px}.l2{padding-left:28px}
+.la-d summary{padding-left:28px;cursor:pointer;list-style:none}.la-d summary::-webkit-details-marker{display:none}.la-d summary:hover{background:#f4f8f6}
+.la-d summary .t::before{content:"▸ ";color:#777;font-size:.75em}.la-d[open] summary .t::before{content:"▾ "}
+.la-i{padding-left:50px;font-size:.92em;color:#333}
+.la-r.sub .v{border-top:1px solid #111;margin-top:2px}.la-r.sub{margin-top:2px}
+.la-r.grand{font-weight:700;margin-top:14px}.la-r.grand .v{border-top:1px solid #111;border-bottom:3px double #111}
+.la-note{margin-top:24px;padding-top:12px;border-top:1px solid #d5ddd9;font-size:.82rem;color:#555}.la-note p{margin:0 0 4px}
+.la-ft{margin-top:14px;display:flex;justify-content:flex-end;gap:10px;flex-wrap:wrap}
+@media(max-width:560px){.la-paper{padding:20px 12px;font-size:13px}.la-r .v,.la-d .v,.la-i .v{min-width:92px}.la-i{padding-left:34px}}
 </style>
 </head>
 <body>
@@ -888,24 +901,19 @@ const rp=n=>"Rp"+Math.round(+n||0).toString().replace(/\B(?=(\d{3})+(?!\d))/g,".
 const jt=n=>"Rp"+String(+(n/1e6).toFixed(2)).replace(".",",")+" jt";
 const pf=x=>x.toFixed(1).replace(".",",");
 const csum=c=>c.items.reduce((a,x)=>a+(+x.amt||0),0);
-const neg=n=>n<0?"("+rp(-n)+")":rp(n);
+const num=n=>Math.round(+n||0).toString().replace(/\B(?=(\d{3})+(?!\d))/g,"."),par=n=>n<0?"("+num(-n)+")":num(n);
 function view(d){
-  const total=d.cats.reduce((a,c)=>a+csum(c),0),sel=d.donasi-total,dpx=d.target>0?Math.min(100,d.donasi*100/d.target):0,dp=Math.round(dpx),n=d.cats.reduce((a,c)=>a+c.items.length,0),dn=+d.donatur||0;
-  const tgl=new Date().toLocaleDateString("id-ID",{day:"numeric",month:"long",year:"numeric"}),cls=sel<0?"neg":"pos",lb=sel<0?"Defisit":"Surplus";
-  const rows=d.cats.map((c,i)=>{const s=csum(c),p=total>0?s*100/total:0;return '<details class="lk-d"><summary><span class="k"><i style="background:'+esc(c.c)+'"></i>'+(i+1)+'. '+esc(c.n)+'</span><span class="a">'+rp(s)+'</span><span class="p">'+pf(p)+'%</span></summary><ul>'+c.items.map(x=>'<li><span>'+esc(x.n)+'</span><span class="a">'+rp(x.amt)+'</span><span class="p"></span></li>').join("")+'</ul></details>'}).join("");
-  const R=(t,a,p,c)=>'<div class="lk-r'+(c?" "+c:"")+'"><span>'+t+'</span><span class="a">'+a+'</span><span class="p">'+(p||"")+'</span></div>';
-  return '<div class="tp">'
-  +'<div class="lk-kpi"><div><small>Total penerimaan</small><b>'+rp(d.donasi)+'</b><span>'+dn+' donatur terverifikasi</span></div>'
-  +'<div><small>Total pengeluaran</small><b>'+rp(total)+'</b><span>'+d.cats.length+' pos · '+n+' rincian</span></div>'
-  +'<div class="'+cls+'"><small>'+lb+' (sementara)</small><b>'+neg(sel)+'</b><span>penerimaan dikurangi pengeluaran</span></div>'
-  +'<div><small>Pencapaian target</small><b>'+pf(dpx)+'%</b><span class="bar"><i style="width:'+dpx.toFixed(1)+'%"></i></span></div></div>'
-  +'<div class="lk-rep"><div class="lk-rh"><div><h3>Laporan Penerimaan dan Pengeluaran Dana</h3><p>Program: '+esc(d.program)+' · Per '+tgl+'</p></div><span class="lk-st">Sementara · belum diaudit</span></div>'
-  +'<div class="lk-cols"><span>Uraian</span><span class="a">Jumlah (Rp)</span><span class="p">% pengeluaran</span></div>'
-  +'<div class="lk-sec">A. PENERIMAAN</div>'+R('Donasi terverifikasi ('+dn+' donatur)',rp(d.donasi))+R('Target penggalangan ('+dp+'% tercapai)',rp(d.target),"","mut")+R('Total Penerimaan',rp(d.donasi),"","tot")
-  +'<div class="lk-sec">B. PENGELUARAN <small>ketuk pos untuk melihat rincian</small></div>'+rows+R('Total Pengeluaran',rp(total),"100%","tot")
-  +R('C. '+lb.toUpperCase()+' (A − B)',neg(sel),"","grand "+cls)
-  +'<div class="lk-ft"><span>Angka pengeluaran bersifat sementara dan diperbarui setelah seluruh kegiatan selesai, termasuk penyerahan hadiah lomba.</span><button type="button" class="lk-print" onclick="document.querySelectorAll(\'#tp-view details\').forEach(function(x){x.open=true});window.print()">Cetak / simpan PDF</button></div></div>'
-  +'<p class="tp-note"><a class="tp-btn" style="margin:0" href="#verifikasi" onclick="var t=document.getElementById(\'t-donasi\');if(t)t.click()">Verifikasi donasi Anda</a></p></div>';
+  const total=d.cats.reduce((a,c)=>a+csum(c),0),sel=d.donasi-total,dp=Math.round(d.target>0?Math.min(100,d.donasi*100/d.target):0),dn=+d.donatur||0;
+  const tgl=new Date().toLocaleDateString("id-ID",{day:"numeric",month:"long",year:"numeric"});
+  const L=(t,a,o)=>'<div class="la-r'+(o?" "+o:"")+'"><span class="t">'+t+'</span><span class="v">'+a+'</span></div>';
+  const rows=d.cats.map(c=>{const s=csum(c);return '<details class="la-d"><summary><span class="t">'+esc(c.n)+'</span><span class="v">'+num(s)+'</span></summary>'+c.items.map(x=>'<div class="la-i"><span class="t">'+esc(x.n)+'</span><span class="v">'+num(x.amt)+'</span></div>').join("")+'</details>'}).join("");
+  return '<div class="tp"><div class="la-paper"><div class="la-title"><b>MWC NU Citeureup</b><b>Laporan Aktivitas</b><span>Program: '+esc(d.program)+'</span><span>Per '+tgl+'</span><span>(dalam rupiah)</span><em>Sementara · belum diaudit</em></div>'
+  +'<div class="la-h">Perubahan Aktiva Bersih:</div><div class="la-h l1">Pendapatan dan Penghasilan:</div>'
+  +L('Sumbangan donasi terverifikasi ('+dn+' donatur)','Rp '+num(d.donasi),"l2")+L('Jumlah Pendapatan dan Penghasilan',num(d.donasi),"l1 sub")
+  +'<div class="la-h l1">Beban dan Kerugian:</div>'+rows+L('Jumlah Beban dan Kerugian',num(total),"l1 sub")
+  +L(sel<0?'Penurunan Aktiva Bersih':'Kenaikan Aktiva Bersih','Rp '+par(sel),"grand")
+  +'<div class="la-note"><p>Informasi lain: target penggalangan dana Rp '+num(d.target)+', tercapai '+dp+'%.</p><p>Angka pengeluaran bersifat sementara dan diperbarui setelah seluruh kegiatan selesai, termasuk penyerahan hadiah lomba. Ketuk nama pos beban untuk melihat rinciannya.</p></div>'
+  +'<div class="la-ft"><a class="lk-print" style="text-decoration:none;display:inline-block" href="#verifikasi" onclick="var t=document.getElementById(\'t-donasi\');if(t)t.click()">Verifikasi donasi Anda</a> <button type="button" class="lk-print" onclick="document.querySelectorAll(\'#tp-view details\').forEach(function(x){x.open=true});window.print()">Cetak / simpan PDF</button></div></div></div>';
 }
 function draw(){
   const op=[...document.querySelectorAll("#tp-view details")].map(x=>x.open);
