@@ -129,7 +129,7 @@ const S={
  KegHSN:{label:"Kegiatan HSN",ttl:"Kegiatan HSN",ic:"check",title:"judul",sub:"",sub2:["deskripsi",""],img:"",f:[["judul","Nama kegiatan","text",80],["deskripsi","Deskripsi","area",400],["urutan","Urutan tampil","num",5,"Angka kecil tampil lebih dulu"]]}};
 const GRP=["Struktur","Banom","Lomba","KegHSN"],GL={Struktur:"Struktur",Banom:"Banom NU",Lomba:"Cabang lomba",KegHSN:"Kegiatan HSN"},SEC={Berita:"kegiatan",Tokoh:"tokoh",Galeri:"galeri",Struktur:"struktur",Banom:"banom",Lomba:"hsn",KegHSN:"hsn"},TK=t=>t==="Tokoh"||t==="Banom";
 function strGroups(){const s=new Set(["Mustasyar","Syuriyah","A’wan","Tanfidziyah"]);(ST.Struktur||[]).concat(D.Struktur||[]).forEach(r=>r.bidang&&s.add(r.bidang));return[...s]}
-function subnav(){if(!GRP.includes(tab))return null;return h("div",{class:"seg",style:"margin-top:0"},...GRP.map(t=>h("button",{type:"button",class:"sg","aria-pressed":t===tab,onclick:()=>go(t)},GL[t])))}
+function subnav(){if(!GRP.includes(tab))return document.createDocumentFragment();return h("div",{class:"seg",style:"margin-top:0"},...GRP.map(t=>h("button",{type:"button",class:"sg","aria-pressed":t===tab,onclick:()=>go(t)},GL[t])))}
 const TABS=[["ringkas","Ringkasan","home"],["Berita","Berita","news"],["Tokoh","Tokoh","user"],["Galeri","Galeri","image"],["Struktur","Halaman","page"],["Trafik","Trafik","chart"],["Pengguna","Pengguna","users"]];
 const ADM={Pengguna:1,Trafik:1,Struktur:1,Banom:1,Lomba:1,KegHSN:1};
 let T=null,me=null,tab="ringkas",D={Berita:[],Tokoh:[],Galeri:[],Pengguna:[],Struktur:[],Banom:[],Lomba:[],KegHSN:[]},q="",busy=false,flt="semua",ST={Berita:null,Tokoh:null,Struktur:null,Banom:null,Lomba:null,KegHSN:null},TR={days:30,d:null,busy:false,tried:false,exp:{}},TS=null,trT=0;
