@@ -1136,7 +1136,25 @@ function galeri(L){if(!L.length)return;
   b.onclick=()=>window.__openLbx&&window.__openLbx(set,k);gr.append(b)});
  w.append(gr,set);s.append(w);const t=document.getElementById("tokoh");t.parentNode.insertBefore(s,t);
  const a=document.querySelector('#menu a[href="#tokoh"]');if(a){const l=el("a","","Galeri");l.href="#galeri";a.before(l)}}
-fetch(API+"?action=content").then(r=>r.json()).then(j=>{if(!j.ok)return;const d=j.data;berita(d.berita||[]);tokoh(d.tokoh||[]);galeri(d.galeri||[])}).catch(()=>{});
+const nm=s=>String(s||"").toLowerCase().replace(/[’`´]/g,"'").replace(/\s+/g," ").trim();
+function struktur(L){const w=document.querySelector("#struktur .orgs");if(!w||!L.length)return;
+ L.forEach(r=>{const bd=r.bidang||"Lainnya";let g=[...w.querySelectorAll(".og")].find(x=>nm(x.querySelector("h3").textContent)===nm(bd));
+  if(!g){g=el("div","og");g.append(el("h3","",bd),el("div","pl"));w.append(g)}
+  const p=el("div","ppl");p.append(el("b","",r.nama));if(r.jabatan)p.append(el("span","",r.jabatan));g.querySelector(".pl").append(p)})}
+const KTI='<span class="av"><svg viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="8" r="4"/><path d="M4 21c0-4.4 3.6-7 8-7s8 2.6 8 7"/></svg></span><div class="kb"><span class="ktl">Ketua PAC</span><b>Nama ketua menyusul</b></div>';
+function banom(L){const g=document.querySelector("#banom .bgrid");if(!g||!L.length)return;
+ L.forEach(r=>{let c=[...g.querySelectorAll(".bnc")].find(x=>nm(x.querySelector("h3").textContent)===nm(r.nama));
+  if(!c){c=el("div","bnc");const k=el("div","kt kt0");k.innerHTML=KTI;c.append(el("h3","",r.nama),el("span","bl",""),el("p",""),k);g.append(c)}
+  if(r.label)c.querySelector(".bl").textContent=r.label;if(r.deskripsi)c.querySelector("p").textContent=r.deskripsi;
+  const k=c.querySelector(".kt");if(!k)return;
+  if(r.ketua){k.classList.remove("kt0");k.querySelector(".kb b").textContent=r.ketua}
+  const u=IMG(r.foto,200);if(u&&r.ketua){const av=k.querySelector(".av");if(av)av.replaceChildren(img(u,"Ketua "+r.nama+": "+r.ketua))}})}
+function lomba(L){const u=document.querySelector("#hsn .lomba ul");if(!u||!L.length)return;
+ L.forEach(r=>{const li=el("li");li.append(el("span","",r.nama));if(r.kategori)li.append(el("em","",r.kategori));u.append(li)})}
+function keghsn(L){const w=document.querySelector("#hsn .acts");if(!w||!L.length)return;
+ L.forEach(r=>{const a=el("div","act");a.append(el("h3","",r.judul));if(r.deskripsi)a.append(el("p","",r.deskripsi));w.append(a)})}
+fetch(API+"?action=content").then(r=>r.json()).then(j=>{if(!j.ok)return;const d=j.data;berita(d.berita||[]);tokoh(d.tokoh||[]);galeri(d.galeri||[]);
+ [[struktur,d.struktur],[banom,d.banom],[lomba,d.lomba],[keghsn,d.keghsn]].forEach(x=>{try{x[0](x[1]||[])}catch(e){}})}).catch(()=>{});
 })();
 </script>
 <script>
