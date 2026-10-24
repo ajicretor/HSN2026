@@ -17,7 +17,7 @@ button{font:inherit;cursor:pointer;touch-action:manipulation}input,textarea,sele
 .btn:hover{transform:translateY(-1px);border-color:var(--t);box-shadow:var(--sh)}.btn:active{transform:scale(.97)}
 .btn.p{background:linear-gradient(135deg,var(--t),var(--g2));color:#fff;border-color:transparent}.btn.d{color:var(--danger)}.btn.d:hover{border-color:var(--danger)}
 .btn:disabled{opacity:.55;pointer-events:none}.btn.s{padding:7px 12px;font-size:.82rem;border-radius:10px}
-.ca .btn.s{white-space:nowrap;flex:1 1 auto;justify-content:center;padding:7px 10px;font-size:.8rem}
+.ca{flex-wrap:wrap}.ca .btn.s{white-space:nowrap;flex:1 1 128px;min-width:0;justify-content:center;gap:6px;padding:7px 8px;font-size:.78rem}.ca .btn.s svg{flex:none}
 .spin{width:16px;height:16px;border-radius:50%;border:2.5px solid currentColor;border-right-color:transparent;animation:rot .7s linear infinite}@keyframes rot{to{transform:rotate(360deg)}}
 /* login */
 #login{min-height:100vh;display:grid;grid-template-columns:1.1fr 1fr}
