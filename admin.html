@@ -144,7 +144,7 @@ const S={
  KegHSN:{label:"Kegiatan HSN",ttl:"Kegiatan HSN",ic:"check",title:"judul",sub:"",sub2:["deskripsi",""],img:"",f:[["judul","Nama kegiatan","text",80],["deskripsi","Deskripsi","area",400],["urutan","Urutan tampil","num",5,"Angka kecil tampil lebih dulu"]]}};
 const GRP=["Struktur","Banom","Lomba","KegHSN"],GL={Struktur:"Struktur",Banom:"Banom NU",Lomba:"Cabang lomba",KegHSN:"Kegiatan HSN"},SEC={Berita:"kegiatan",Tokoh:"tokoh",Galeri:"galeri",Struktur:"struktur",Banom:"banom",Lomba:"hsn",KegHSN:"hsn"},TK=t=>t==="Tokoh"||t==="Banom";
 function strGroups(){const s=new Set(["Mustasyar","Syuriyah","A’wan","Tanfidziyah"]);(ST.Struktur||[]).concat(D.Struktur||[]).forEach(r=>r.bidang&&s.add(r.bidang));return[...s]}
-function subnav(){if(!GRP.includes(tab))return document.createDocumentFragment();return h("div",{class:"seg",style:"margin-top:0"},...GRP.map(t=>h("button",{type:"button",class:"sg","aria-pressed":t===tab,onclick:()=>go(t)},GL[t])))}
+function subnav(){if(!GRP.includes(tab))return document.createDocumentFragment();const w=h("div",{class:"seg",style:"margin-top:0"},...GRP.map(t=>h("button",{type:"button",class:"sg","aria-pressed":t===tab,onclick:()=>go(t)},GL[t])));if(!OLD)return w;const fr=document.createDocumentFragment();fr.append(h("div",{style:"background:#fbece8;color:#b4432d;padding:10px 14px;border-radius:10px;margin-bottom:12px;font-size:.88rem;line-height:1.5",text:"Backend (Apps Script) masih versi lama, jadi bagian ini belum bisa menyimpan (muncul “Jenis tidak valid”). Tempel CMS.gs terbaru, lalu Deploy → Manage deployments → Edit → New version → Deploy."}),w);return fr}
 const TABS=[["ringkas","Ringkasan","home"],["Berita","Berita","news"],["Tokoh","Tokoh","user"],["Galeri","Galeri","image"],["Struktur","Halaman","page"],["Trafik","Trafik","chart"],["Pengguna","Pengguna","users"]];
 const ADM={Pengguna:1,Trafik:1,Struktur:1,Banom:1,Lomba:1,KegHSN:1};
 let T=null,me=null,tab="ringkas",D={Berita:[],Tokoh:[],Galeri:[],Pengguna:[],Struktur:[],Banom:[],Lomba:[],KegHSN:[]},q="",busy=false,flt="semua",ST={Berita:null,Tokoh:null,Struktur:null,Banom:null,Lomba:null,KegHSN:null},TR={days:30,d:null,busy:false,tried:false,exp:{}},TS=null,trT=0;
@@ -188,7 +188,7 @@ async function loadStatic(force){
   ST.Lomba=[...d.querySelectorAll("#hsn .lomba li")].map((e,i)=>({id:"s"+i,nama:tx(e,"span"),kategori:tx(e,"em")}));
   ST.KegHSN=[...d.querySelectorAll("#hsn .acts .act")].map((e,i)=>({id:"s"+i,judul:tx(e,"h3"),deskripsi:tx(e,"p")}));
  }catch(e){["Berita","Tokoh","Struktur","Banom","Lomba","KegHSN"].forEach(k=>ST[k]=ST[k]||[])}}
-async function load(force){busy=true;render(true);const sp=loadStatic(force);try{const d=await api("all");D.Berita=d.berita;D.Tokoh=d.tokoh;D.Galeri=d.galeri;D.Struktur=d.struktur||[];D.Banom=d.banom||[];D.Lomba=d.lomba||[];D.KegHSN=d.keghsn||[];if(me.peran==="admin")D.Pengguna=await api("users")}catch(e){toast(e.message,1)}busy=false;render();sp.then(()=>{if(me&&!busy)render()});if(me.peran==="admin")api("stats",{days:7}).then(d=>{TS=d;if(tab==="ringkas")render()}).catch(()=>{});if(force)toast("Data dimuat ulang")}
+async function load(force){busy=true;render(true);const sp=loadStatic(force);try{const d=await api("all");D.Berita=d.berita;D.Tokoh=d.tokoh;D.Galeri=d.galeri;D.Struktur=d.struktur||[];D.Banom=d.banom||[];D.Lomba=d.lomba||[];D.KegHSN=d.keghsn||[];OLD=d.struktur===undefined;if(me.peran==="admin")D.Pengguna=await api("users")}catch(e){toast(e.message,1)}busy=false;render();sp.then(()=>{if(me&&!busy)render()});if(me.peran==="admin")api("stats",{days:7}).then(d=>{TS=d;if(tab==="ringkas")render()}).catch(()=>{});if(force)toast("Data dimuat ulang")}
 function segDraw(){const s=$("seg"),ok=S[tab]&&stF(tab);s.hidden=!ok;if(!ok)return;const a=D[tab].length,b=stF(tab).length;
  s.replaceChildren(...[["semua","Semua",a+b],["cms","Dari CMS",a],["bawaan","Bawaan situs",b]].map(x=>h("button",{type:"button",class:"sg","aria-pressed":flt===x[0],onclick:()=>{flt=x[0];segDraw();fill()}},x[1],h("b",{text:x[2]}))),h("span",{class:"sgn",text:"“Bawaan situs” adalah konten bawaan di index.html. Klik “Impor ke CMS” pada kartunya untuk menyalinnya ke CMS agar bisa diedit; item dari CMS bisa diedit langsung di sini."}))}
 /* ---------- render ---------- */
@@ -219,7 +219,7 @@ function stF(t){const L=ST[t];if(!L||!TT[t])return L;const k=TT[t],s=new Set((D[
 async function impor(t,r){try{const d={...r};delete d.id;delete d.src;const c=S[t];
  if(c.img&&r.src){toast("Menyalin foto…");const b=await(await fetch(r.src)).blob();const data=await new Promise(ok=>{const fr=new FileReader();fr.onload=()=>ok(fr.result.split(",")[1]);fr.readAsDataURL(b)});d[c.img]=(await api("upload",{mime:b.type||"image/webp",data})).id}
  openForm(t,d)}catch(e){toast("Gagal menyalin: "+e.message,1)}}
-let DR=null;
+let DR=null,OLD=false;
 async function reorder(t,a,b){if(!a||a===b)return;const L=(D[t]||[]).slice().sort((x,y)=>(+x.urutan||999)-(+y.urutan||999));
  const i=L.findIndex(r=>r.id===a),j=L.findIndex(r=>r.id===b);if(i<0||j<0)return;L.splice(j,0,L.splice(i,1)[0]);
  try{for(let k=0;k<L.length;k++)if(String(L[k].urutan)!==String(k+1))await api("save",{type:t,item:{...L[k],urutan:String(k+1)}});toast("Urutan disimpan");await load()}catch(e){toast(e.message,1)}}
