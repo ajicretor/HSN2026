@@ -151,7 +151,7 @@ const TABS=[["ringkas","Ringkasan","home"],["Berita","Berita","news"],["Tokoh","
 const ADM={Pengguna:1,Trafik:1,Struktur:1,Banom:1,Lomba:1,KegHSN:1};
 let T=null,me=null,tab="ringkas",D={Berita:[],Tokoh:[],Galeri:[],Pengguna:[],Struktur:[],Banom:[],Lomba:[],KegHSN:[]},q="",busy=false,flt="semua",ST={Berita:null,Tokoh:null,Struktur:null,Banom:null,Lomba:null,KegHSN:null},TR={days:30,d:null,busy:false,tried:false,exp:{}},TS=null,trT=0;
 const SL={ringkas:"ringkasan",Berita:"berita",Tokoh:"tokoh",Galeri:"galeri",Struktur:"struktur",Banom:"banom",Lomba:"lomba",KegHSN:"kegiatan-hsn",Trafik:"trafik",Riwayat:"riwayat",Pengguna:"pengguna"},RL=Object.fromEntries(Object.entries(SL).map(([k,v])=>[v,k]));
-function routeTab(){const t=RL[location.hash.slice(1).split("/")[0]];if(SUP())return t==="Trafik"?"Trafik":"Riwayat";if(t==="Riwayat")return"ringkas";return t&&(!ADM[t]||ADMN())?t:"ringkas"}
+function routeTab(){const t=RL[location.hash.slice(1).split("/")[0]];if(SUP())return t==="Trafik"||t==="Riwayat"?t:"ringkas";if(t==="Riwayat")return"ringkas";return t&&(!ADM[t]||ADMN())?t:"ringkas"}
 /* ---------- util ---------- */
 function toast(m,err){const t=h("div",{class:"ts"+(err?" e":""),onclick:()=>t.remove()},ic(err?"x":"check",18),h("span",{text:m}));$("toasts").append(t);setTimeout(()=>t.remove(),4200)}
 function ask(t,m,ok){return new Promise(r=>{$("cft").textContent=t;$("cfm").textContent=m;$("cfy").textContent=ok||"Hapus";const d=$("cf");const f=v=>{d.close();r(v)};$("cfy").onclick=()=>f(true);$("cfn").onclick=()=>f(false);d.oncancel=()=>r(false);d.showModal();$("cfn").focus()})}
@@ -173,10 +173,10 @@ $("go").onclick=login;$("p").addEventListener("keydown",e=>{if(e.key==="Enter")l
 function logout(k){T=me=null;try{sessionStorage.removeItem("cms")}catch(e){}$("app").hidden=true;$("login").hidden=false;closeDr(true);if(k)$("le").textContent="Sesi berakhir, silakan masuk lagi."}
 $("out").append(ic("out"),h("span",{text:"Keluar"}));$("out").onclick=()=>logout();$("out2").append(ic("out",18));$("out2").onclick=()=>logout();$("th2").onclick=()=>$("th").click();$("th").onclick=()=>theme(document.documentElement.dataset.theme==="dark"?"light":"dark");
 function start(d){T=d.token;me=d;try{sessionStorage.setItem("cms",JSON.stringify(d))}catch(e){}try{localStorage.setItem("notrack","1")}catch(e){}$("login").hidden=true;$("app").hidden=false;
- $("av").textContent=ini(d.nama);$("un").textContent=d.nama;$("ur").textContent=d.peran==="admin"?"Administrator":"Kontributor";show(routeTab());if(!location.hash)history.replaceState(null,"","#"+SL[tab]);load()}
+ $("av").textContent=ini(d.nama);$("un").textContent=d.nama;$("ur").textContent=d.peran==="superadmin"?"Super Admin":d.peran==="admin"?"Administrator":"Kontributor";show(routeTab());if(!location.hash)history.replaceState(null,"","#"+SL[tab]);load()}
 /* ---------- nav & data ---------- */
-function nav(){$("nv").replaceChildren(...TABS.filter(t=>SUP()?(t[0]==="Riwayat"||t[0]==="Trafik"):(t[0]!=="Riwayat"&&(!ADM[t[0]]||ADMN()))).map(t=>{const b=h("a",{class:"nv",title:t[1],href:"#"+SL[t[0]]},ic(t[2]),h("span",{text:t[1]}));if(t[0]===tab||(t[0]==="Struktur"&&GRP.includes(tab)))b.setAttribute("aria-current","page");return b}))}
-function show(t){tab=t;q="";flt="semua";$("q").value="";nav();render();clearInterval(trT);if(t!=="Trafik")TR.tried=false;if(t==="Riwayat")RW.d=null;document.title=(t==="ringkas"?"Ringkasan":t==="Pengguna"||t==="Trafik"||t==="Riwayat"?t:S[t].ttl)+" · CMS Citeureup";scrollTo({top:0})}
+function nav(){$("nv").replaceChildren(...TABS.filter(t=>SUP()?(t[0]==="ringkas"||t[0]==="Riwayat"||t[0]==="Trafik"):(t[0]!=="Riwayat"&&(!ADM[t[0]]||ADMN()))).map(t=>{const b=h("a",{class:"nv",title:t[1],href:"#"+SL[t[0]]},ic(t[2]),h("span",{text:t[1]}));if(t[0]===tab||(t[0]==="Struktur"&&GRP.includes(tab)))b.setAttribute("aria-current","page");return b}))}
+function show(t){tab=t;q="";flt="semua";$("q").value="";nav();render();clearInterval(trT);if(t!=="Trafik")TR.tried=false;if(t==="Riwayat"){RW.d=null;RW.tried=false}if(t==="ringkas")RW.tried=false;document.title=(t==="ringkas"?"Ringkasan":t==="Pengguna"||t==="Trafik"||t==="Riwayat"?t:S[t].ttl)+" · CMS Citeureup";scrollTo({top:0})}
 function go(t){const s="#"+SL[t];if(location.hash!==s)location.hash=s;else show(t)}
 addEventListener("hashchange",()=>{if(me)show(routeTab())});
 async function loadStatic(force){
@@ -224,9 +224,9 @@ async function impor(t,r){try{const d={...r};delete d.id;delete d.src;const c=S[
 let DR=null,OLD=false;
 const RW={d:null,busy:false,f:"semua"};
 const tglWaktu=s=>{const d=new Date(s);return isNaN(d)?"":d.getDate()+" "+BLN[d.getMonth()]+" "+d.getFullYear()+", "+String(d.getHours()).padStart(2,"0")+"."+String(d.getMinutes()).padStart(2,"0")};
-async function loadRw(){RW.busy=true;if(tab==="Riwayat")riwayat($("view"));try{RW.d=await api("riwayat",{limit:300})}catch(e){toast(e.message,1)}RW.busy=false;if(tab==="Riwayat")riwayat($("view"))}
+async function loadRw(){RW.busy=true;RW.tried=true;if(tab==="Riwayat")riwayat($("view"));try{RW.d=await api("riwayat",{limit:300})}catch(e){toast(e.message,1)}RW.busy=false;if(tab==="Riwayat")riwayat($("view"));if(tab==="ringkas"&&SUP())render()}
 function riwayat(v){
- if(!RW.d&&!RW.busy)loadRw();
+ if(!RW.d&&!RW.busy&&!RW.tried)loadRw();
  const AK={tambah:"menambah",ubah:"mengubah",hapus:"menghapus",pulihkan:"memulihkan",masuk:"masuk (login)"},JN={Berita:"berita",Tokoh:"tokoh",Galeri:"foto galeri",Struktur:"pengurus",Banom:"banom",Lomba:"cabang lomba",KegHSN:"kegiatan HSN",Pengguna:"pengguna",Akun:""};
  const seg=h("div",{class:"seg",style:"margin-top:0"},...[["semua","Semua"],["hapus","Dihapus"],["ubah","Diubah"],["tambah","Ditambah"],["pulihkan","Dipulihkan"],["masuk","Login"]].map(([k,l])=>h("button",{type:"button",class:"sg","aria-pressed":RW.f===k,onclick:()=>{RW.f=k;riwayat($("view"))}},l)));
  const L=(RW.d||[]).filter(r=>RW.f==="semua"||r.aksi===RW.f);
@@ -254,11 +254,11 @@ function dash(v){
  const adm=ADMN(),hr=new Date().getHours(),g=hr<11?"Selamat pagi":hr<15?"Selamat siang":hr<18?"Selamat sore":"Selamat malam";
  const CT=adm?["Berita","Tokoh","Galeri","Struktur","Banom","Lomba","KegHSN"]:["Berita","Tokoh","Galeri"];
  const K=Object.fromEntries(CT.map(t=>[t,cnt(t)])),sum=(k)=>CT.reduce((a,t)=>a+K[t][k],0),total=sum("tot"),bawaan=sum("st"),cms=sum("cm");
- const qa=h("div",{class:"qa"},...["Berita","Tokoh","Galeri"].map(t=>h("button",{class:"btn s",onclick:()=>{go(t);openForm(t)}},ic("plus",16),h("span",{text:S[t].label}))),adm?h("button",{class:"btn s",onclick:()=>go("Struktur")},ic("page",16),h("span",{text:"Halaman"})):null);
+ const qa=SUP()?null:h("div",{class:"qa"},...["Berita","Tokoh","Galeri"].map(t=>h("button",{class:"btn s",onclick:()=>{go(t);openForm(t)}},ic("plus",16),h("span",{text:S[t].label}))),adm?h("button",{class:"btn s",onclick:()=>go("Struktur")},ic("page",16),h("span",{text:"Halaman"})):null);
  const cards=CT.map((t,i)=>{const k=K[t],n=h("b",{text:"0"});countUp(n,k.tot);
   const sub=(k.st?k.st+" bawaan · ":"")+k.cm+" dari CMS";
-  return h("a",{class:"sc",href:"#"+SL[t],style:"--i:"+i+";--c:"+COL[t]},ic(S[t].ic,24),h("div",{},n,h("small",{text:S[t].label+" tayang",style:"display:block"}),h("small",{text:sub,style:"display:block;font-size:.78rem"})))});
- if(adm){const n=h("b",{text:"0"});countUp(n,D.Pengguna.length);cards.push(h("a",{class:"sc",href:"#pengguna",style:"--i:"+cards.length+";--c:#d2593f"},ic("users",24),h("div",{},n,h("small",{text:"Pengguna",style:"display:block"}),h("small",{text:D.Pengguna.filter(u=>u.aktif==="ya").length+" aktif",style:"display:block;font-size:.78rem"}))))}
+  return h(SUP()?"div":"a",{class:"sc",href:SUP()?null:"#"+SL[t],style:"--i:"+i+";--c:"+COL[t]},ic(S[t].ic,24),h("div",{},n,h("small",{text:S[t].label+" tayang",style:"display:block"}),h("small",{text:sub,style:"display:block;font-size:.78rem"})))});
+ if(adm){const n=h("b",{text:"0"});countUp(n,D.Pengguna.length);cards.push(h(SUP()?"div":"a",{class:"sc",href:SUP()?null:"#pengguna",style:"--i:"+cards.length+";--c:#d2593f"},ic("users",24),h("div",{},n,h("small",{text:"Pengguna",style:"display:block"}),h("small",{text:D.Pengguna.filter(u=>u.aktif==="ya").length+" aktif",style:"display:block;font-size:.78rem"}))))}
  if(adm&&TS){const n=h("b",{text:"0"});countUp(n,TS.total);cards.push(h("a",{class:"sc",href:"#trafik",style:"--i:"+cards.length+";--c:#2b7de0"},ic("chart",24),h("div",{},n,h("small",{text:"Kunjungan 7 hari",style:"display:block"}),h("small",{text:TS.uniq+" pengunjung unik",style:"display:block;font-size:.78rem"}))))}
  const sc=h("div",{class:"st"},...cards);
  /* terbaru: CMS dulu, lalu konten bawaan situs */
@@ -270,13 +270,17 @@ function dash(v){
   return h("div",{class:"li"},src?h("img",{src,alt:"",loading:"lazy"}):h("span",{class:"ph"},ic(c.ic,20)),h("div",{},h("b",{text:r[c.title]||"(tanpa judul)"}),h("small",{text:meta})),h("span",{class:"chip"+(cms?" g":" a"),text:cms?"CMS":"Bawaan"}))};
  const pTerbaru=h("div",{class:"pan"},h("h3",{text:"Terbaru di landing page"}),...(list.length?list.map(rowT):[h("p",{class:"hn",text:"Belum ada konten. Mulai dengan menambah berita pertama."})]));
  const pBagian=h("div",{class:"pan"},h("h3",{},h("span",{text:"Isi per bagian"}),h("small",{text:total+" item · "+bawaan+" bawaan · "+cms+" CMS",style:"font-weight:500;color:var(--mut);font-size:.8rem"})),...CT.map(t=>{const k=K[t];
-  return h("a",{class:"li",href:"#"+SL[t],style:"text-decoration:none;color:inherit"},h("span",{class:"ph",style:"color:"+COL[t]},ic(S[t].ic,20)),h("div",{},h("b",{text:S[t].ttl}),h("small",{text:(k.st?k.st+" bawaan situs · ":"")+k.cm+" dari CMS"+(k.ov?" ("+k.ov+" melengkapi bawaan)":"")})),h("span",{class:"chip",text:k.tot}))}));
+  return h(SUP()?"div":"a",{class:"li",href:SUP()?null:"#"+SL[t],style:"text-decoration:none;color:inherit"},h("span",{class:"ph",style:"color:"+COL[t]},ic(S[t].ic,20)),h("div",{},h("b",{text:S[t].ttl}),h("small",{text:(k.st?k.st+" bawaan situs · ":"")+k.cm+" dari CMS"+(k.ov?" ("+k.ov+" melengkapi bawaan)":"")})),h("span",{class:"chip",text:k.tot}))}));
  const panels=[pTerbaru,pBagian];
+ if(SUP()){if(!RW.d&&!RW.busy&&!RW.tried)loadRw();const AKd={tambah:"menambah",ubah:"mengubah",hapus:"menghapus",pulihkan:"memulihkan",masuk:"masuk"};
+  const ik=a=>a==="hapus"?"trash":a==="pulihkan"?"refresh":a==="masuk"?"lock":a==="ubah"?"edit":"plus";
+  panels.unshift(h("div",{class:"pan"},h("h3",{},h("span",{text:"Aktivitas terbaru"}),h("a",{href:"#riwayat",text:"Semua →",style:"font-size:.82rem;font-weight:600;color:var(--t)"})),
+   ...(RW.d&&RW.d.length?RW.d.slice(0,6).map(r=>h("div",{class:"li"},h("span",{class:"ph"},ic(ik(r.aksi),20)),h("div",{},h("b",{text:(r.nama||r.username)+" "+(AKd[r.aksi]||r.aksi)}),h("small",{text:[r.judul&&r.aksi!=="masuk"?"“"+r.judul+"”":"",tglWaktu(r.waktu)].filter(Boolean).join(" · ")})),h("span",{class:"chip"+(r.aksi==="hapus"?" a":""),text:r.aksi==="hapus"&&r.bisa?"Bisa dipulihkan":r.peran}))):[h("p",{class:"hn",text:RW.d?"Belum ada catatan.":"Memuat…"})])))}
  if(adm){const top=(a,n)=>(a||[]).filter(x=>x.n!=="Tidak diketahui").slice(0,n);
   const rows=TS?top(TS.negara,3).map(x=>["country",x]).concat(top(TS.kota,4).map(x=>["city",x])):[];
   panels.push(h("div",{class:"pan"},h("h3",{},h("span",{text:"Pengunjung 7 hari"}),h("a",{href:"#trafik",text:"Detail →",style:"font-size:.82rem;font-weight:600;color:var(--t)"})),
    ...(TS&&TS.total?[h("small",{class:"hn",text:TS.total+" kunjungan · "+TS.uniq+" unik · "+TS.baru+" baru",style:"display:block;margin-bottom:6px"})].concat(rows.length?rows.map(([k,x])=>h("div",{class:"li"},h("span",{class:"ph",text:flag(x.cc)}),h("div",{},h("b",{text:x.n}),h("small",{text:k==="country"?"Negara":(x.s||"Kabupaten / kota")})),h("span",{class:"chip",text:x.v}))):[h("p",{class:"hn",text:"Lokasi pengunjung belum terbaca."})]):[h("p",{class:"hn",text:TS?"Belum ada kunjungan tercatat.":"Memuat data trafik…"})])))}
- v.replaceChildren(h("div",{class:"wl"},h("div",{},h("h2",{text:g+", "+me.nama.split(" ")[0]}),h("p",{text:(adm?"Anda masuk sebagai admin: bisa mengelola semua konten dan pengguna.":"Kiriman Anda langsung tayang di landing page. Edit dan hapus dilakukan admin.")+" Saat ini "+total+" item tayang di landing page ("+bawaan+" bawaan situs, "+cms+" dari CMS)."})),qa),sc,h("div",{class:"tg",style:"margin-top:0"},...panels))}
+ v.replaceChildren(h("div",{class:"wl"},h("div",{},h("h2",{text:g+", "+me.nama.split(" ")[0]}),h("p",{text:(SUP()?"Anda masuk sebagai super admin: memantau seluruh aktivitas dan trafik, serta memulihkan data yang dihapus.":adm?"Anda masuk sebagai admin: bisa mengelola semua konten dan pengguna.":"Kiriman Anda langsung tayang di landing page. Edit dan hapus dilakukan admin.")+" Saat ini "+total+" item tayang di landing page ("+bawaan+" bawaan situs, "+cms+" dari CMS)."})),qa),sc,h("div",{class:"tg",style:"margin-top:0"},...panels))}
 
 /* ---------- trafik ---------- */
 const flag=cc=>cc&&/^[A-Za-z]{2}$/.test(cc)?String.fromCodePoint(...[...cc.toUpperCase()].map(c=>127397+c.charCodeAt(0))):"🌐";
