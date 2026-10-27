@@ -371,7 +371,7 @@ function terapkan(){const P=CFG.pengaturan;
 
 /* data dari CMS (spreadsheet). Jika sudah ada isinya, menggantikan data bawaan di atas. */
 const API="https://script.google.com/macros/s/AKfycbyvNfvjCxiVM4ftqOHJGw5wkZW0GmXPg4wqTadEnuciAqA8ik39KwJoErIo10cP3RkwrQ/exec";
-fetch(API+"?action=content").then(r=>r.json()).then(j=>{const A=j&&j.ok&&j.data&&j.data.sedekah;if(!Array.isArray(A))return;
+fetch(API+"?action=content&_="+Date.now()).then(r=>r.json()).then(j=>{const A=j&&j.ok&&j.data&&j.data.sedekah;if(!Array.isArray(A))return;
  A.sort((a,b)=>String(a.dibuat||"").localeCompare(String(b.dibuat||"")));
  /* baris khusus (kategori diawali "_") = pengaturan & reel, bukan donatur */
  const cf=A.filter(r=>r.kategori==="_cfg").pop();

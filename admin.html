@@ -163,9 +163,18 @@ function sedPanel(){
 /* ---------- pengaturan halaman sedekah.html (khusus admin) ----------
    Disimpan sebagai baris khusus di data Sedekah (kategori diawali "_"), jadi tidak perlu mengubah backend. */
 const CF=()=>{const o={don:0,samar:0,testi:0};if(D.Cfg)String(D.Cfg.doa||"").split(";").forEach(x=>{const q=x.split("=");if(q[0]&&q[0] in o)o[q[0]]=q[1]==="1"?1:0});return o};
-async function saveCfg(k,v){const o=CF();o[k]=v?1:0;
- try{await api("save",{type:"Sedekah",item:Object.assign(D.Cfg?{id:D.Cfg.id}:{},{nama:"Pengaturan halaman",nominal:"1",kategori:"_cfg",tanggal:"",doa:"don="+o.don+";samar="+o.samar+";testi="+o.testi})});toast("Pengaturan disimpan");}
- catch(e){toast(e.message,1)}await load()}
+async function saveCfg(k,v){
+ try{
+  /* baca data terbaru dulu agar tidak menimpa pengaturan lain / membuat baris ganda */
+  const all=await api("all"),rows=(all.sedekah||[]).filter(r=>r.kategori==="_cfg"),cur=rows[rows.length-1];
+  const o={don:0,samar:0,testi:0};
+  if(cur)String(cur.doa||"").split(";").forEach(x=>{const q=x.split("=");if(q[0]&&q[0] in o)o[q[0]]=q[1]==="1"?1:0});
+  o[k]=v?1:0;
+  await api("save",{type:"Sedekah",item:Object.assign(cur?{id:cur.id}:{},{nama:"Pengaturan halaman",nominal:"1",kategori:"_cfg",tanggal:"",doa:"don="+o.don+";samar="+o.samar+";testi="+o.testi})});
+  for(const x of rows.slice(0,-1)){try{await api("del",{type:"Sedekah",id:x.id})}catch(e){}}
+  toast("Pengaturan disimpan");
+ }catch(e){toast(e.message,1)}
+ await load()}
 function pengPanel(){const o=CF();
  const sw=(k,jd,ket)=>{const c=h("input",{type:"checkbox",checked:!!o[k],style:"width:20px;height:20px;accent-color:#0f6b3a;flex:none;margin-top:2px"});c.onchange=()=>{document.querySelectorAll("#pgp input").forEach(i=>i.disabled=true);saveCfg(k,c.checked)};
   return h("label",{style:"display:flex;gap:12px;align-items:flex-start;padding:10px 0;cursor:pointer"},c,h("div",{},h("b",{text:jd,style:"display:block"}),h("small",{class:"hn",text:ket})))};
