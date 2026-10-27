@@ -164,7 +164,7 @@ function sedPanel(){
    Disimpan sebagai baris khusus di data Sedekah (kategori diawali "_"), jadi tidak perlu mengubah backend. */
 const CF=()=>{const o={don:0,samar:0,testi:0};if(D.Cfg)String(D.Cfg.doa||"").split(";").forEach(x=>{const q=x.split("=");if(q[0]&&q[0] in o)o[q[0]]=q[1]==="1"?1:0});return o};
 async function saveCfg(k,v){const o=CF();o[k]=v?1:0;
- try{await api("save",{type:"Sedekah",item:Object.assign(D.Cfg?{id:D.Cfg.id}:{},{nama:"Pengaturan halaman",nominal:"0",kategori:"_cfg",tanggal:"",doa:"don="+o.don+";samar="+o.samar+";testi="+o.testi})});toast("Pengaturan disimpan");}
+ try{await api("save",{type:"Sedekah",item:Object.assign(D.Cfg?{id:D.Cfg.id}:{},{nama:"Pengaturan halaman",nominal:"1",kategori:"_cfg",tanggal:"",doa:"don="+o.don+";samar="+o.samar+";testi="+o.testi})});toast("Pengaturan disimpan");}
  catch(e){toast(e.message,1)}await load()}
 function pengPanel(){const o=CF();
  const sw=(k,jd,ket)=>{const c=h("input",{type:"checkbox",checked:!!o[k],style:"width:20px;height:20px;accent-color:#0f6b3a;flex:none;margin-top:2px"});c.onchange=()=>{document.querySelectorAll("#pgp input").forEach(i=>i.disabled=true);saveCfg(k,c.checked)};
@@ -187,7 +187,7 @@ function reelForm(it){it=it||{};const ed=!!it.id;
   if(!/^https:\/\/([\w-]+\.)?(instagram\.com|youtube\.com|youtu\.be|tiktok\.com)\//i.test(u)){toast("Tempel link https:// dari Instagram, YouTube Shorts, atau TikTok",1);return}
   if(!/youtube\.com\/watch/i.test(u))u=u.split(/[?#]/)[0];
   if(u.length>120){toast("Link terlalu panjang (maks 120 karakter). Salin link versi pendek.",1);return}
-  sv.disabled=true;try{await api("save",{type:"Sedekah",item:Object.assign(ed?{id:it.id}:{},{nama:$("f_rn").value.trim(),nominal:"0",kategori:"_reel",tanggal:"",doa:u})});toast("Reel disimpan");closeDr();await load()}catch(e){toast(e.message,1)}sv.disabled=false};
+  sv.disabled=true;try{await api("save",{type:"Sedekah",item:Object.assign(ed?{id:it.id}:{},{nama:$("f_rn").value.trim(),nominal:"1",kategori:"_reel",tanggal:"",doa:u})});toast("Reel disimpan");closeDr();await load()}catch(e){toast(e.message,1)}sv.disabled=false};
  openDr(ed?"Edit reel":"Tambah reel testimoni",[mk("f_ru","Link reel",it.doa,200,"Instagram Reel, YouTube Shorts, atau TikTok. Contoh: https://www.instagram.com/reel/AbC123/"),mk("f_rn","Nama pemberi testimoni (opsional)",it.nama,80)],[h("button",{class:"btn",onclick:()=>closeDr()},"Batal"),sv])}
 async function reelDel(r){if(!await ask("Hapus reel ini?","Reel akan dihapus dari tab Testimoni.","Ya, hapus"))return;try{await api("del",{type:"Sedekah",id:r.id});toast("Dihapus");await load()}catch(e){toast(e.message,1)}}
 async function imporSed(list,b){const sum=list.reduce((s,r)=>s+r.nominal,0);
