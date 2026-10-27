@@ -158,7 +158,38 @@ function sedPanel(){
  if(OLDS)box.append(h("div",{style:"background:#fbece8;color:#b4432d;padding:10px 14px;border-radius:10px;font-size:.88rem;line-height:1.5;flex:1 1 280px",text:"Backend (Apps Script) belum mengenal jenis Sedekah, jadi belum bisa menyimpan. Tambahkan jenis Sedekah di CMS.gs (kolom: nama, nominal, kategori, tanggal, doa), lalu Deploy versi baru."}));
  else if(belum.length){const b=h("button",{class:"btn p"},ic("plus",18),h("span",{text:"Impor "+belum.length+" donatur awal"}));
   b.onclick=()=>imporSed(belum,b);box.append(b)}
- return box}
+ if(OLDS||!ADMN())return box;const fr=document.createDocumentFragment();fr.append(box,pengPanel(),reelPanel());return fr}
+
+/* ---------- pengaturan halaman sedekah.html (khusus admin) ----------
+   Disimpan sebagai baris khusus di data Sedekah (kategori diawali "_"), jadi tidak perlu mengubah backend. */
+const CF=()=>{const o={don:0,samar:0,testi:0};if(D.Cfg)String(D.Cfg.doa||"").split(";").forEach(x=>{const q=x.split("=");if(q[0]&&q[0] in o)o[q[0]]=q[1]==="1"?1:0});return o};
+async function saveCfg(k,v){const o=CF();o[k]=v?1:0;
+ try{await api("save",{type:"Sedekah",item:Object.assign(D.Cfg?{id:D.Cfg.id}:{},{nama:"Pengaturan halaman",nominal:"0",kategori:"_cfg",tanggal:"",doa:"don="+o.don+";samar="+o.samar+";testi="+o.testi})});toast("Pengaturan disimpan");}
+ catch(e){toast(e.message,1)}await load()}
+function pengPanel(){const o=CF();
+ const sw=(k,jd,ket)=>{const c=h("input",{type:"checkbox",checked:!!o[k],style:"width:20px;height:20px;accent-color:#0f6b3a;flex:none;margin-top:2px"});c.onchange=()=>{document.querySelectorAll("#pgp input").forEach(i=>i.disabled=true);saveCfg(k,c.checked)};
+  return h("label",{style:"display:flex;gap:12px;align-items:flex-start;padding:10px 0;cursor:pointer"},c,h("div",{},h("b",{text:jd,style:"display:block"}),h("small",{class:"hn",text:ket})))};
+ return h("div",{class:"pan",id:"pgp",style:"margin-bottom:14px"},h("b",{text:"Pengaturan tampilan sedekah.html",style:"display:block;font-size:1.05rem;margin-bottom:4px"}),
+  sw("don","Tampilkan daftar donatur","Tab “Donatur” dan kartu “Riwayat Donatur”. Nonaktif = disembunyikan dari pengunjung."),
+  sw("samar","Samarkan nama donatur dengan bintang","Contoh: Septa Aji menjadi S**** A**. Berlaku bila daftar donatur ditampilkan."),
+  sw("testi","Tampilkan tab Testimoni (reel)","Tab muncul bila diaktifkan dan minimal ada satu reel di bawah."))}
+function reelPanel(){const L=D.Reel||[];
+ const add=h("button",{class:"btn p"},ic("plus",18),h("span",{text:"Tambah reel"}));add.onclick=()=>reelForm();
+ const rows=L.length?L.map(r=>h("div",{style:"display:flex;gap:10px;align-items:center;justify-content:space-between;flex-wrap:wrap;padding:10px 0;border-top:1px solid var(--line)"},
+  h("div",{style:"min-width:0;flex:1 1 220px"},h("b",{text:r.nama||"(tanpa nama)",style:"display:block"}),h("small",{class:"hn",text:r.doa,style:"word-break:break-all"})),
+  h("div",{style:"display:flex;gap:8px"},h("button",{class:"btn s",onclick:()=>reelForm(r)},ic("edit",16),h("span",{text:"Edit"})),h("button",{class:"btn s d",onclick:()=>reelDel(r)},ic("trash",16),h("span",{text:"Hapus"})))))
+  :[h("small",{class:"hn",text:"Belum ada reel. Klik “Tambah reel” lalu tempel link Instagram Reel, YouTube Shorts, atau TikTok.",style:"display:block;padding:6px 0"})];
+ return h("div",{class:"pan",style:"margin-bottom:14px"},h("div",{style:"display:flex;gap:10px;align-items:center;justify-content:space-between;flex-wrap:wrap;margin-bottom:6px"},h("b",{text:"Testimoni reel ("+L.length+")",style:"font-size:1.05rem"}),add),...rows)}
+function reelForm(it){it=it||{};const ed=!!it.id;
+ const mk=(id,lb,v,max,hint)=>h("label",{class:"fl",htmlFor:id},h("span",{text:lb}),h("input",{class:"inp",id,value:v||"",maxLength:max}),hint?h("span",{class:"hn",text:hint}):null);
+ const sv=h("button",{class:"btn p"},ic("check",18),h("span",{text:ed?"Simpan perubahan":"Tambah reel"}));
+ sv.onclick=async()=>{let u=$("f_ru").value.trim();
+  if(!/^https:\/\/([\w-]+\.)?(instagram\.com|youtube\.com|youtu\.be|tiktok\.com)\//i.test(u)){toast("Tempel link https:// dari Instagram, YouTube Shorts, atau TikTok",1);return}
+  if(!/youtube\.com\/watch/i.test(u))u=u.split(/[?#]/)[0];
+  if(u.length>120){toast("Link terlalu panjang (maks 120 karakter). Salin link versi pendek.",1);return}
+  sv.disabled=true;try{await api("save",{type:"Sedekah",item:Object.assign(ed?{id:it.id}:{},{nama:$("f_rn").value.trim(),nominal:"0",kategori:"_reel",tanggal:"",doa:u})});toast("Reel disimpan");closeDr();await load()}catch(e){toast(e.message,1)}sv.disabled=false};
+ openDr(ed?"Edit reel":"Tambah reel testimoni",[mk("f_ru","Link reel",it.doa,200,"Instagram Reel, YouTube Shorts, atau TikTok. Contoh: https://www.instagram.com/reel/AbC123/"),mk("f_rn","Nama pemberi testimoni (opsional)",it.nama,80)],[h("button",{class:"btn",onclick:()=>closeDr()},"Batal"),sv])}
+async function reelDel(r){if(!await ask("Hapus reel ini?","Reel akan dihapus dari tab Testimoni.","Ya, hapus"))return;try{await api("del",{type:"Sedekah",id:r.id});toast("Dihapus");await load()}catch(e){toast(e.message,1)}}
 async function imporSed(list,b){const sum=list.reduce((s,r)=>s+r.nominal,0);
  if(!await ask("Impor data donatur awal?",list.length+" donatur (total "+RP(sum)+") akan disimpan ke spreadsheet lewat CMS. Proses sekitar 1 menit, jangan tutup halaman.","Ya, impor"))return;
  b.disabled=true;let n=0;
@@ -209,7 +240,7 @@ async function loadStatic(force){
   ST.Lomba=[...d.querySelectorAll("#hsn .lomba li")].map((e,i)=>({id:"s"+i,nama:tx(e,"span"),kategori:tx(e,"em")}));
   ST.KegHSN=[...d.querySelectorAll("#hsn .acts .act")].map((e,i)=>({id:"s"+i,judul:tx(e,"h3"),deskripsi:tx(e,"p")}));
  }catch(e){["Berita","Tokoh","Struktur","Banom","Lomba","KegHSN"].forEach(k=>ST[k]=ST[k]||[])}}
-async function load(force){busy=true;render(true);const sp=loadStatic(force);try{const d=await api("all");D.Berita=d.berita;D.Tokoh=d.tokoh;D.Galeri=d.galeri;D.Struktur=d.struktur||[];D.Banom=d.banom||[];D.Lomba=d.lomba||[];D.KegHSN=d.keghsn||[];D.Sedekah=(d.sedekah||[]).map(r=>({...r,nominalTxt:RP(+r.nominal||0)}));OLDS=d.sedekah===undefined;OLD=d.struktur===undefined;if(ADMN())D.Pengguna=await api("users")}catch(e){toast(e.message,1)}busy=false;render();sp.then(()=>{if(me&&!busy)render()});if(ADMN())api("stats",{days:7}).then(d=>{TS=d;if(tab==="ringkas")render()}).catch(()=>{});if(force)toast("Data dimuat ulang")}
+async function load(force){busy=true;render(true);const sp=loadStatic(force);try{const d=await api("all");D.Berita=d.berita;D.Tokoh=d.tokoh;D.Galeri=d.galeri;D.Struktur=d.struktur||[];D.Banom=d.banom||[];D.Lomba=d.lomba||[];D.KegHSN=d.keghsn||[];{const raw=d.sedekah||[];D.Cfg=raw.filter(r=>r.kategori==="_cfg").pop()||null;D.Reel=raw.filter(r=>r.kategori==="_reel");D.Sedekah=raw.filter(r=>!/^_/.test(r.kategori||"")).map(r=>({...r,nominalTxt:RP(+r.nominal||0)}))}OLDS=d.sedekah===undefined;OLD=d.struktur===undefined;if(ADMN())D.Pengguna=await api("users")}catch(e){toast(e.message,1)}busy=false;render();sp.then(()=>{if(me&&!busy)render()});if(ADMN())api("stats",{days:7}).then(d=>{TS=d;if(tab==="ringkas")render()}).catch(()=>{});if(force)toast("Data dimuat ulang")}
 function segDraw(){const s=$("seg"),ok=S[tab]&&stF(tab);s.hidden=!ok;if(!ok)return;const a=D[tab].length,b=stF(tab).length;
  s.replaceChildren(...[["semua","Semua",a+b],["cms","Dari CMS",a],["bawaan","Bawaan situs",b]].map(x=>h("button",{type:"button",class:"sg","aria-pressed":flt===x[0],onclick:()=>{flt=x[0];segDraw();fill()}},x[1],h("b",{text:x[2]}))),h("span",{class:"sgn",text:"“Bawaan situs” adalah konten bawaan di index.html. Klik “Impor ke CMS” pada kartunya untuk menyalinnya ke CMS agar bisa diedit; item dari CMS bisa diedit langsung di sini."}))}
 /* ---------- render ---------- */

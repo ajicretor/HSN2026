@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<meta http-equiv="Content-Security-Policy" content="default-src 'none'; script-src 'unsafe-inline'; style-src 'unsafe-inline' https://fonts.googleapis.com; font-src https://fonts.gstatic.com; img-src 'self' data:; connect-src 'self' https://script.google.com https://script.googleusercontent.com; base-uri 'none'; form-action 'none'; object-src 'none'">
+<meta http-equiv="Content-Security-Policy" content="default-src 'none'; script-src 'unsafe-inline'; style-src 'unsafe-inline' https://fonts.googleapis.com; font-src https://fonts.gstatic.com; img-src 'self' data:; frame-src https://www.instagram.com https://www.youtube-nocookie.com https://www.tiktok.com; connect-src 'self' https://script.google.com https://script.googleusercontent.com; base-uri 'none'; form-action 'none'; object-src 'none'">
 <meta name="referrer" content="no-referrer">
 <title>Sedekah &amp; Donasi | MWC NU Kecamatan Citeureup</title>
 <meta name="description" content="Sedekah dan donasi Hari Santri Nasional 2026 bersama MWC NU Kecamatan Citeureup. Transparan, mudah, dan bisa diverifikasi.">
@@ -69,13 +69,13 @@ h1,h2,h3{font-family:var(--ff-head);line-height:1.2;margin:0}
 .panel{padding:clamp(18px,3.4vw,30px)}.panel[hidden]{display:none}
 .panel p{margin:0 0 18px;color:var(--mut);font-size:1.02rem;line-height:1.85}
 .panel h3{font-size:1.1rem;margin:22px 0 10px}
-/* penyaluran */
-.use{display:grid;gap:16px}
-.use-row div{display:flex;justify-content:space-between;gap:10px;font-weight:600;font-size:.95rem;margin-bottom:6px;flex-wrap:wrap}
-.use-row em{font-style:normal;color:var(--mut);font-weight:500}
-.use-row .t{height:9px;border-radius:99px;background:var(--line);overflow:hidden}.use-row .t i{display:block;height:100%;border-radius:99px;background:var(--c,var(--g1))}
-.note{padding:14px 16px;border-left:4px solid var(--gold);background:var(--bg);border-radius:10px;font-size:.92rem;color:var(--mut);margin-top:18px}
-/* testimoni */
+/* testimoni (reel) */
+.reels{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,340px));gap:18px;justify-content:center}
+.reel{border:1px solid var(--line);border-radius:14px;overflow:hidden;background:var(--bg)}
+.reel iframe{display:block;width:100%;border:0;background:#000}
+.reel .cap{padding:10px 14px;font-weight:700;font-size:.9rem;color:var(--g1)}
+.reel a.lnk{display:block;padding:18px;font-weight:700;color:var(--g1);text-decoration:underline}
+[hidden]{display:none!important}
 .tst{display:grid;gap:12px}
 .tst blockquote{margin:0;padding:16px 18px;background:var(--bg);border:1px solid var(--line);border-radius:14px}
 .tst blockquote p{margin:0 0 8px;font-style:italic;color:var(--ink);font-size:.98rem;line-height:1.7}
@@ -88,8 +88,6 @@ h1,h2,h3{font-family:var(--ff-head);line-height:1.2;margin:0}
 .dl q{display:block;quotes:none;margin-top:8px;padding:6px 10px;font-size:.85rem;font-style:italic;color:var(--mut);border:1px solid var(--line);border-radius:8px;background:var(--bg)}
 .dl .w{flex:1;min-width:0}.dl .top{display:flex;align-items:center;gap:12px}
 .av{flex:none;width:46px;height:46px;border-radius:50%;display:grid;place-items:center;background:var(--g1);color:#fff;font-weight:700;font-size:1.02rem}
-.cats{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:10px}.cats span{font-size:.8rem;font-weight:600;padding:5px 12px;border-radius:99px;background:var(--okbg);color:var(--g1)}
-@media(prefers-color-scheme:dark){.cats span{color:#4ade80}}
 .empty{color:var(--mut);text-align:center;padding:18px 0;margin:0}
 /* sidebar */
 .side{display:grid;gap:18px}
@@ -188,12 +186,10 @@ footer .copy{display:block;margin-top:6px;font-size:.78rem;opacity:.6}
       <div class="box">
         <div class="tabs" role="tablist" aria-label="Informasi program">
           <button role="tab" id="t-desk" aria-selected="true" aria-controls="p-desk">Deskripsi</button>
-          <button role="tab" id="t-salur" aria-selected="false" aria-controls="p-salur" tabindex="-1">Penyaluran</button>
-          <button role="tab" id="t-testi" aria-selected="false" aria-controls="p-testi" tabindex="-1">Testimoni</button>
-          <button role="tab" id="t-don" aria-selected="false" aria-controls="p-don" tabindex="-1">Donatur</button>
+          <button role="tab" id="t-testi" aria-selected="false" aria-controls="p-testi" tabindex="-1" hidden>Testimoni</button>
+          <button role="tab" id="t-don" aria-selected="false" aria-controls="p-don" tabindex="-1" hidden>Donatur</button>
         </div>
         <div class="panel" id="p-desk" role="tabpanel" aria-labelledby="t-desk"></div>
-        <div class="panel" id="p-salur" role="tabpanel" aria-labelledby="t-salur" hidden></div>
         <div class="panel" id="p-testi" role="tabpanel" aria-labelledby="t-testi" hidden></div>
         <div class="panel" id="p-don" role="tabpanel" aria-labelledby="t-don" hidden></div>
       </div>
@@ -218,7 +214,7 @@ footer .copy{display:block;margin-top:6px;font-size:.78rem;opacity:.6}
         </div>
       </section>
 
-      <section class="hist" aria-labelledby="h-r">
+      <section class="hist" aria-labelledby="h-r" id="hist-sec" hidden>
         <h3 id="h-r">Riwayat Donatur</h3>
         <ul class="dl" id="hist"></ul>
         <button type="button" class="more" id="more-d">Lihat semua donatur</button>
@@ -250,20 +246,12 @@ const CFG={
   wa:"",                    // nomor panitia, contoh "6281234567890" (kosong = pilih kontak sendiri)
   nominal:[10000,25000,50000,100000,250000,500000],
   deskripsi:[
-    "Sedekah Hari Santri 2026 adalah ikhtiar bersama warga Citeureup untuk menyukseskan rangkaian peringatan Hari Santri Nasional sekaligus membantu santri, guru ngaji, dan masyarakat yang membutuhkan.",
-    "Dana yang terkumpul digunakan untuk penyelenggaraan kegiatan, santunan, serta penguatan pendidikan keagamaan di tingkat ranting. Program ini sejalan dengan semangat NU Care: berkhidmat untuk umat dan berbagi manfaat kepada sesama.",
+    "Sedekah Hari Santri 2026 adalah ikhtiar bersama warga Citeureup untuk menyukseskan penyelenggaraan kegiatan Hari Santri Nasional (HSN) 2026.",
+    "Seluruh dana yang terkumpul digunakan untuk penyelenggaraan kegiatan HSN. Program ini sejalan dengan semangat NU Care: berkhidmat untuk umat dan berbagi manfaat kepada sesama.",
     "Setiap rupiah dicatat oleh panitia. Anda dapat memeriksa kecocokan donasi melalui menu Verifikasi dengan kode bukti donasi yang diterima."
   ],
-  penyaluran:[
-    {n:"Penyelenggaraan kegiatan HSN",p:40,c:"#0f6b3a"},
-    {n:"Santunan anak yatim dan dhuafa",p:30,c:"#e0a526"},
-    {n:"Pendidikan guru ngaji dan TPQ",p:20,c:"#178888"},
-    {n:"Operasional dan dokumentasi",p:10,c:"#6b7f78"}
-  ],
-  testimoni:[
-    {t:"Prosesnya mudah dan laporannya terbuka. Insyaallah semakin tenang bersedekah lewat NU.",o:"Ibu Rohmah"},
-    {t:"Alhamdulillah, bisa ikut berkontribusi untuk kegiatan santri di kampung kami.",o:"Bapak Ahmad"}
-  ],
+  pengaturan:{don:0,samar:0,testi:0},   // diatur lewat admin
+  reel:[],
   /* Donasi KBNU & masyarakat (rekap panitia). Jika CMS sudah berisi data, CMS yang dipakai. */
   donatur:[
     {n:"Septa Aji",a:200000,k:"Perorangan"},
@@ -330,45 +318,62 @@ isiStat();
  else{h.innerHTML='<svg viewBox="0 0 24 24" width="28" height="18" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" aria-label="Tanpa batas"><path d="M6 16c5 0 7-8 12-8a4 4 0 0 1 0 8c-5 0-7-8-12-8a4 4 0 1 0 0 8"/></svg>'}})();
 
 CFG.deskripsi.forEach(t=>$("p-desk").append(el("p","",t)));
-(function(){const p=$("p-salur");p.append(el("p","","Rencana penggunaan dana sedekah yang terkumpul:"));
- const u=el("div","use");CFG.penyaluran.forEach(r=>{const w=el("div","use-row"),h=el("div"),t=el("div","t"),i=el("i");
-  h.append(el("span","",r.n),el("em","",r.p+"%"));i.style.width=r.p+"%";i.style.setProperty("--c",r.c);t.append(i);w.append(h,t);u.append(w)});
- p.append(u,el("div","note","Rincian realisasi penggunaan dana dipublikasikan di bagian Transparansi pada halaman utama setelah program selesai."))})();
-(function(){const p=$("p-testi"),w=el("div","tst");
- CFG.testimoni.forEach(r=>{const b=el("blockquote");b.append(el("p","",r.t),el("cite","","— "+r.o));w.append(b)});p.append(w)})();
 
 /* daftar donatur */
 let urut=[];
 function susun(){const a=CFG.donatur.map((d,i)=>({...d,i}));urut=a.some(d=>d.t)?a.sort((x,y)=>String(y.t||"").localeCompare(String(x.t||""))||y.i-x.i):a.reverse()}
+const nm=n=>{n=n||"Hamba Allah";return CFG.pengaturan.samar?n.trim().split(/\s+/).map(w=>w[0]+"*".repeat(Math.max(2,w.length-1))).join(" "):n};
 function row(d,full){const li=el("li"),av=el("span","av",(d.n||"H").trim().split(/\s+/).slice(0,2).map(x=>x[0]).join("").toUpperCase());
- const w=el("div","w"),top=el("div","top"),m=el("div","m"),b=el("b","",d.n||"Hamba Allah"),s=el("small","",[d.k,d.t?tgl(d.t):""].filter(Boolean).join(" \u00b7 ")),a=el("span","a",rp(d.a));
+ const w=el("div","w"),top=el("div","top"),m=el("div","m"),b=el("b","",nm(d.n)),s=el("small","",[d.k,d.t?tgl(d.t):""].filter(Boolean).join(" \u00b7 ")),a=el("span","a",rp(d.a));
  m.append(b,s);top.append(av,m,a);w.append(top);if(d.d){w.append(el("q","","\u201C"+d.d+"\u201D"))}
  li.append(w);return li}
 function renderHist(){const u=$("hist");u.replaceChildren();urut.slice(0,3).forEach(d=>u.append(row(d)));
  if(!urut.length)u.append(el("li","empty","Jadilah donatur pertama."));$("more-d").hidden=urut.length<=3}
 function renderAll(){const p=$("p-don");p.replaceChildren();const u=el("ul","dl");
  if(!urut.length){p.append(el("p","empty","Belum ada donatur."));return}
- const g={};urut.forEach(d=>{const k=d.k||"Lainnya";g[k]=g[k]||{n:0,a:0};g[k].n++;g[k].a+=d.a});
- const c=el("div","cats");Object.entries(g).sort((x,y)=>y[1].a-x[1].a).forEach(([k,v])=>c.append(el("span","",k+" \u00b7 "+v.n+" \u00b7 "+rp(v.a))));
- urut.forEach(d=>u.append(row(d)));p.append(c,u)}
+ urut.forEach(d=>u.append(row(d)));p.append(u)}
 function segarkan(){susun();renderHist();renderAll()}
 segarkan();
 
 /* tab */
-const tabs=["desk","salur","testi","don"];
-function tab(n){tabs.forEach(k=>{const on=k===n;$("t-"+k).setAttribute("aria-selected",on);$("t-"+k).tabIndex=on?0:-1;$("p-"+k).hidden=!on})}
-tabs.forEach((k,i)=>{$("t-"+k).onclick=()=>tab(k);
- $("t-"+k).addEventListener("keydown",e=>{let j=null;if(e.key==="ArrowRight")j=(i+1)%4;if(e.key==="ArrowLeft")j=(i+3)%4;
-  if(j!=null){e.preventDefault();tab(tabs[j]);$("t-"+tabs[j]).focus()}})});
+const tabs=["desk","testi","don"];let aktif="desk";
+const vis=()=>tabs.filter(k=>k==="desk"||!$("t-"+k).hidden);
+function tab(n){if(!vis().includes(n))n="desk";aktif=n;tabs.forEach(k=>{const on=k===n;$("t-"+k).setAttribute("aria-selected",on);$("t-"+k).tabIndex=on?0:-1;$("p-"+k).hidden=!on})}
+tabs.forEach(k=>{$("t-"+k).onclick=()=>tab(k);
+ $("t-"+k).addEventListener("keydown",e=>{const v=vis(),i=v.indexOf(k);let j=null;if(e.key==="ArrowRight")j=(i+1)%v.length;if(e.key==="ArrowLeft")j=(i+v.length-1)%v.length;
+  if(j!=null){e.preventDefault();tab(v[j]);$("t-"+v[j]).focus()}})});
 $("more-d").onclick=()=>{tab("don");$("p-don").scrollIntoView({behavior:"smooth",block:"start"})};
-{const h=location.hash.slice(1);if(["salur","testi","don"].includes(h))tab(h)}
+
+/* testimoni = reel (Instagram / YouTube Shorts / TikTok), diaktifkan admin */
+function embed(u){let m;u=String(u||"").trim();if(!/^https:\/\//i.test(u))return null;
+ if(m=u.match(/instagram\.com\/(?:[\w.]+\/)?(?:reel|p)\/([\w-]+)/i))return{src:"https://www.instagram.com/reel/"+m[1]+"/embed",h:640};
+ if(m=u.match(/(?:youtube\.com\/(?:shorts\/|embed\/|watch\?(?:[^#]*&)?v=)|youtu\.be\/)([\w-]{11})/i))return{src:"https://www.youtube-nocookie.com/embed/"+m[1],h:600};
+ if(m=u.match(/tiktok\.com\/[^?#]*\/video\/(\d+)/i))return{src:"https://www.tiktok.com/embed/v2/"+m[1],h:740};
+ return{link:u}}
+function renderReels(){const p=$("p-testi");p.replaceChildren();const w=el("div","reels");
+ CFG.reel.forEach(r=>{const e=embed(r.u);if(!e)return;const c=el("div","reel");
+  if(e.src){const f=document.createElement("iframe");f.src=e.src;f.loading="lazy";f.height=e.h;f.title=r.c||"Testimoni";f.setAttribute("allowfullscreen","");f.setAttribute("referrerpolicy","strict-origin-when-cross-origin");f.setAttribute("sandbox","allow-scripts allow-same-origin allow-popups allow-presentation");c.append(f)}
+  else{const a=el("a","lnk","Tonton testimoni \u2192");a.href=e.link;a.target="_blank";a.rel="noopener noreferrer";c.append(a)}
+  if(r.c)c.append(el("div","cap","\u2014 "+r.c));w.append(c)});
+ p.append(w)}
+/* terapkan pengaturan dari admin */
+function terapkan(){const P=CFG.pengaturan;
+ $("t-don").hidden=!P.don;$("hist-sec").hidden=!P.don;$("t-testi").hidden=!(P.testi&&CFG.reel.length);
+ segarkan();renderReels();
+ const h=location.hash.slice(1);tab(["testi","don"].includes(h)?h:aktif)}
 
 /* data dari CMS (spreadsheet). Jika sudah ada isinya, menggantikan data bawaan di atas. */
 const API="https://script.google.com/macros/s/AKfycbyvNfvjCxiVM4ftqOHJGw5wkZW0GmXPg4wqTadEnuciAqA8ik39KwJoErIo10cP3RkwrQ/exec";
-fetch(API+"?action=content").then(r=>r.json()).then(j=>{const L=j&&j.ok&&j.data&&j.data.sedekah;if(!Array.isArray(L)||!L.length)return;
- L.sort((a,b)=>String(a.dibuat||"").localeCompare(String(b.dibuat||"")));
- const d=L.map(r=>({n:r.nama||"Hamba Allah",a:+r.nominal||0,k:r.kategori||"",t:/^\d{4}-\d{2}-\d{2}/.test(r.tanggal||"")?String(r.tanggal).slice(0,10):"",d:r.doa||""})).filter(x=>x.a>0);
- if(!d.length)return;CFG.donatur=d;isiStat();segarkan()}).catch(()=>{});
+fetch(API+"?action=content").then(r=>r.json()).then(j=>{const A=j&&j.ok&&j.data&&j.data.sedekah;if(!Array.isArray(A))return;
+ A.sort((a,b)=>String(a.dibuat||"").localeCompare(String(b.dibuat||"")));
+ /* baris khusus (kategori diawali "_") = pengaturan & reel, bukan donatur */
+ const cf=A.filter(r=>r.kategori==="_cfg").pop();
+ if(cf){const o={};String(cf.doa||"").split(";").forEach(x=>{const q=x.split("=");if(q[0])o[q[0].trim()]=q[1]==="1"});CFG.pengaturan={don:!!o.don,samar:!!o.samar,testi:!!o.testi}}
+ CFG.reel=A.filter(r=>r.kategori==="_reel").map(r=>({c:r.nama||"",u:r.doa||""})).filter(r=>r.u);
+ const L=A.filter(r=>!/^_/.test(r.kategori||""));
+ if(L.length){const d=L.map(r=>({n:r.nama||"Hamba Allah",a:+r.nominal||0,k:r.kategori||"",t:/^\d{4}-\d{2}-\d{2}/.test(r.tanggal||"")?String(r.tanggal).slice(0,10):"",d:r.doa||""})).filter(x=>x.a>0);
+  if(d.length){CFG.donatur=d;isiStat()}}
+ terapkan()}).catch(()=>{});
 
 /* menu mobile */
 const nt=$("nav-toggle"),mn=$("menu");
