@@ -166,7 +166,7 @@ const CF=()=>{const o={don:0,samar:0,testi:0};if(D.Cfg)String(D.Cfg.doa||"").spl
 async function saveCfg(k,v){
  try{
   /* baca data terbaru dulu agar tidak menimpa pengaturan lain / membuat baris ganda */
-  const all=await api("all"),rows=(all.sedekah||[]).filter(r=>r.kategori==="_cfg"),cur=rows[rows.length-1];
+  const all=await api("all"),rows=(all.sedekah||[]).filter(r=>r.kategori==="_cfg").sort((a,b)=>String(a.dibuat||"").localeCompare(String(b.dibuat||""))),cur=rows[rows.length-1];
   const o={don:0,samar:0,testi:0};
   if(cur)String(cur.doa||"").split(";").forEach(x=>{const q=x.split("=");if(q[0]&&q[0] in o)o[q[0]]=q[1]==="1"?1:0});
   o[k]=v?1:0;
@@ -249,7 +249,7 @@ async function loadStatic(force){
   ST.Lomba=[...d.querySelectorAll("#hsn .lomba li")].map((e,i)=>({id:"s"+i,nama:tx(e,"span"),kategori:tx(e,"em")}));
   ST.KegHSN=[...d.querySelectorAll("#hsn .acts .act")].map((e,i)=>({id:"s"+i,judul:tx(e,"h3"),deskripsi:tx(e,"p")}));
  }catch(e){["Berita","Tokoh","Struktur","Banom","Lomba","KegHSN"].forEach(k=>ST[k]=ST[k]||[])}}
-async function load(force){busy=true;render(true);const sp=loadStatic(force);try{const d=await api("all");D.Berita=d.berita;D.Tokoh=d.tokoh;D.Galeri=d.galeri;D.Struktur=d.struktur||[];D.Banom=d.banom||[];D.Lomba=d.lomba||[];D.KegHSN=d.keghsn||[];{const raw=d.sedekah||[];D.Cfg=raw.filter(r=>r.kategori==="_cfg").pop()||null;D.Reel=raw.filter(r=>r.kategori==="_reel");D.Sedekah=raw.filter(r=>!/^_/.test(r.kategori||"")).map(r=>({...r,nominalTxt:RP(+r.nominal||0)}))}OLDS=d.sedekah===undefined;OLD=d.struktur===undefined;if(ADMN())D.Pengguna=await api("users")}catch(e){toast(e.message,1)}busy=false;render();sp.then(()=>{if(me&&!busy)render()});if(ADMN())api("stats",{days:7}).then(d=>{TS=d;if(tab==="ringkas")render()}).catch(()=>{});if(force)toast("Data dimuat ulang")}
+async function load(force){busy=true;render(true);const sp=loadStatic(force);try{const d=await api("all");D.Berita=d.berita;D.Tokoh=d.tokoh;D.Galeri=d.galeri;D.Struktur=d.struktur||[];D.Banom=d.banom||[];D.Lomba=d.lomba||[];D.KegHSN=d.keghsn||[];{const raw=d.sedekah||[];D.Cfg=raw.filter(r=>r.kategori==="_cfg").sort((a,b)=>String(a.dibuat||"").localeCompare(String(b.dibuat||""))).pop()||null;D.Reel=raw.filter(r=>r.kategori==="_reel").sort((a,b)=>String(a.dibuat||"").localeCompare(String(b.dibuat||"")));D.Sedekah=raw.filter(r=>!/^_/.test(r.kategori||"")).map(r=>({...r,nominalTxt:RP(+r.nominal||0)}))}OLDS=d.sedekah===undefined;OLD=d.struktur===undefined;if(ADMN())D.Pengguna=await api("users")}catch(e){toast(e.message,1)}busy=false;render();sp.then(()=>{if(me&&!busy)render()});if(ADMN())api("stats",{days:7}).then(d=>{TS=d;if(tab==="ringkas")render()}).catch(()=>{});if(force)toast("Data dimuat ulang")}
 function segDraw(){const s=$("seg"),ok=S[tab]&&stF(tab);s.hidden=!ok;if(!ok)return;const a=D[tab].length,b=stF(tab).length;
  s.replaceChildren(...[["semua","Semua",a+b],["cms","Dari CMS",a],["bawaan","Bawaan situs",b]].map(x=>h("button",{type:"button",class:"sg","aria-pressed":flt===x[0],onclick:()=>{flt=x[0];segDraw();fill()}},x[1],h("b",{text:x[2]}))),h("span",{class:"sgn",text:"“Bawaan situs” adalah konten bawaan di index.html. Klik “Impor ke CMS” pada kartunya untuk menyalinnya ke CMS agar bisa diedit; item dari CMS bisa diedit langsung di sini."}))}
 /* ---------- render ---------- */
