@@ -113,21 +113,21 @@ body[data-jenis="juara"] .hero{background:linear-gradient(145deg,#06302c,#0b5d5d
 .chd button:hover{border-color:var(--pri);color:var(--pri)}
 .shell>*{min-width:0}
 .certwrap{max-width:100%;overflow-x:auto;border-radius:12px;-webkit-overflow-scrolling:touch}
-.cert{--c1:#3d4852;--c2:#2b343c;position:relative;container-type:inline-size;width:100%;min-width:0;-webkit-text-size-adjust:none;text-size-adjust:none;aspect-ratio:963/537;border-radius:6px;overflow:hidden;background:#e6e8eb;box-shadow:0 12px 34px -14px rgba(0,0,0,.45);cursor:zoom-in}
-.cert.g{--c1:#6e4a00;--c2:#432d00;background:#cdb06a}
-.cert img{position:absolute;inset:0;width:100%;height:100%;display:block}
+.cert{--c1:#3d4852;--c2:#2b343c;position:relative;container-type:inline-size;width:100%;min-width:0;-webkit-text-size-adjust:none;text-size-adjust:none;aspect-ratio:297/210;border-radius:6px;overflow:hidden;background:#fff;box-shadow:0 12px 34px -14px rgba(0,0,0,.45);cursor:zoom-in}
+.cert.g{--c1:#6e4a00;--c2:#432d00}
+.cert img{position:absolute;left:0;top:10.567%;width:100%;height:78.865%;display:block}
 .ct{position:absolute;left:0;right:0;text-align:center;transform:translateY(-50%);color:#141414;white-space:nowrap}
-.c-ttl{top:32.8%;font:700 2.05cqw Cinzel,Georgia,serif;letter-spacing:.12em;color:var(--c1)}
-.c-ttl.j{font-size:2.56cqw;top:32.5%}
-.c-no{top:38.2%;font:italic 700 1.38cqw "Segoe UI",Calibri,Arial,sans-serif}
-.c-nm{top:47.3%;font:italic 700 2.97cqw "Playfair Display",Georgia,serif;color:var(--c2)}
-.c-kt{top:57.3%;font:700 1.79cqw Cinzel,Georgia,serif;letter-spacing:.06em;color:var(--c1);text-transform:uppercase}
-.c-kd{left:10.5%;right:auto;text-align:left;top:72.6%;font:700 1.15cqw "Courier New",Menlo,Consolas,monospace;letter-spacing:.04em;color:#2b2b2b}
-.c-ds{top:65.2%;font:700 1.45cqw/1.87cqw "Segoe UI",Calibri,Candara,Arial,sans-serif}
+.c-ttl{top:36.435%;font:700 2.05cqw Cinzel,Georgia,serif;letter-spacing:.12em;color:var(--c1)}
+.c-ttl.j{font-size:2.56cqw;top:36.199%}
+.c-no{top:40.694%;font:italic 700 1.38cqw "Segoe UI",Calibri,Arial,sans-serif}
+.c-nm{top:47.871%;font:italic 700 2.97cqw "Playfair Display",Georgia,serif;color:var(--c2)}
+.c-kt{top:55.757%;font:700 1.79cqw Cinzel,Georgia,serif;letter-spacing:.06em;color:var(--c1);text-transform:uppercase}
+.c-kd{left:10.5%;right:auto;text-align:left;top:67.824%;font:700 1.15cqw "Courier New",Menlo,Consolas,monospace;letter-spacing:.04em;color:#2b2b2b}
+.c-ds{top:61.988%;font:700 1.45cqw/1.87cqw "Segoe UI",Calibri,Candara,Arial,sans-serif}
 .cnote{font-size:.78rem;color:var(--mut);margin:10px 0 0}
 #lb{position:fixed;inset:0;z-index:60;background:rgba(5,15,12,.88);display:none;overflow:auto;padding:16px;cursor:zoom-out}
 #lb.on{display:block}
-.lbin{width:min(98vw,175vh);margin:auto}
+.lbin{width:min(98vw,138vh);margin:auto}
 @media(max-width:700px){.lbin{width:max(98vw,820px);margin:auto 0}}
 .lbin .cert{min-width:0;cursor:zoom-out}
 .chb{display:flex;gap:8px;flex-wrap:wrap}
@@ -220,26 +220,28 @@ function certHtml(d,jr,rk){
   <div class="ct c-ds" ${sc<1?`style="font-size:${(1.45*sc).toFixed(3)}cqw"`:""}>${L.map(esc).join("<br>")}</div></div>`;
 }
 /* ===== Unduh sertifikat (PNG / PDF) — digambar ulang ke canvas, tanpa server ===== */
-const CW=1926,CH=Math.round(CW*537/963);
+const CW=2339,CH=1654;   // A4 landscape (297x210 mm) ±200 dpi; template (963:537) diskalakan selebar kertas & dipusatkan vertikal
 let lastC=null,AUTO=(new URLSearchParams(location.search).get("unduh")||"").toLowerCase();
 if(AUTO!=="pdf"&&AUTO!=="png")AUTO=null;
 const loadImg=src=>new Promise((res,rej)=>{const i=new Image();i.onload=()=>res(i);i.onerror=rej;i.src=src});
 async function renderCanvas(d,jr,rk){
   const W=CW,H=CH,c=document.createElement("canvas");c.width=W;c.height=H;const x=c.getContext("2d");
-  x.drawImage(await loadImg(jr?CERT_G:CERT_S),0,0,W,H);
+  const ah=W*537/963,oy=(H-ah)/2,Y=v=>oy+v*ah/100;   // Y(v): posisi v% tinggi template -> piksel kanvas A4
+  x.fillStyle="#fff";x.fillRect(0,0,W,H);
+  x.drawImage(await loadImg(jr?CERT_G:CERT_S),0,oy,W,ah);
   try{await Promise.all([document.fonts.load("700 20px Cinzel"),document.fonts.load("italic 700 20px 'Playfair Display'")])}catch(e){}
   const p=v=>v*W/100,c1=jr?"#6e4a00":"#3d4852",c2=jr?"#432d00":"#2b343c";
   const T=(t,top,px,style,fam,col,ls)=>{x.font=style+" "+px+"px "+fam;x.fillStyle=col;x.textAlign="center";x.textBaseline="middle";
-    if("letterSpacing" in x)x.letterSpacing=(ls||0)+"px";x.fillText(t,W/2,top+H*.002)};
+    if("letterSpacing" in x)x.letterSpacing=(ls||0)+"px";x.fillText(t,W/2,top+ah*.002)};
   const ttl=p(jr?2.56:2.05);
-  T(jr?"JUARA "+rk:"PARTISIPASI",(jr?32.5:32.8)*H/100,ttl,"700","Cinzel,Georgia,serif",c1,.12*ttl);
-  if(d.no)T("Nomor: "+d.no,38.2*H/100,p(1.38),"italic 700",'"Segoe UI",Calibri,Arial,sans-serif',"#141414");
-  T(String(d.nama||""),47.8*H/100,p(nameSize(d.nama)),"italic 700",'"Playfair Display",Georgia,serif',c2);
-  if(d.kategori){const k=p(1.79);T(("Kategori "+d.kategori).toUpperCase(),57.3*H/100,k,"700","Cinzel,Georgia,serif",c1,.06*k)}
+  T(jr?"JUARA "+rk:"PARTISIPASI",Y(jr?32.5:32.8),ttl,"700","Cinzel,Georgia,serif",c1,.12*ttl);
+  if(d.no)T("Nomor: "+d.no,Y(38.2),p(1.38),"italic 700",'"Segoe UI",Calibri,Arial,sans-serif',"#141414");
+  T(String(d.nama||""),Y(47.8),p(nameSize(d.nama)),"italic 700",'"Playfair Display",Georgia,serif',c2);
+  if(d.kategori){const k=p(1.79);T(("Kategori "+d.kategori).toUpperCase(),Y(57.3),k,"700","Cinzel,Georgia,serif",c1,.06*k)}
   const L=certLines(d,jr,rk),fs=p(1.45*descScale(L)),lh=p(1.87);
-  L.forEach((t,i)=>T(t,65.2*H/100+(i-1)*lh,fs,"700",'"Segoe UI",Calibri,Candara,Arial,sans-serif',"#141414"));
+  L.forEach((t,i)=>T(t,Y(65.2)+(i-1)*lh,fs,"700",'"Segoe UI",Calibri,Candara,Arial,sans-serif',"#141414"));
   if(d.kode){const k=p(1.15);x.font='700 '+k+'px "Courier New",Menlo,Consolas,monospace';x.fillStyle="#2b2b2b";x.textAlign="left";x.textBaseline="middle";
-    if("letterSpacing" in x)x.letterSpacing=(.04*k)+"px";x.fillText("Kode verifikasi: "+d.kode,W*.105,72.6*H/100+H*.002)}
+    if("letterSpacing" in x)x.letterSpacing=(.04*k)+"px";x.fillText("Kode verifikasi: "+d.kode,W*.105,Y(72.6)+ah*.002)}
   return c;
 }
 function jpegToPdf(jb,w,h,pw,ph){
@@ -267,7 +269,7 @@ async function unduh(fmt){
     const c=await renderCanvas(d,jr,rk),nm=fileName(d);
     if(fmt==="pdf"){
       const jb=new Uint8Array(await (await new Promise(r=>c.toBlob(r,"image/jpeg",.93))).arrayBuffer());
-      const pw=842,ph=+(pw*CH/CW).toFixed(2);
+      const pw=841.89,ph=595.28;   // A4 landscape (pt)
       saveBlob(new Blob([jpegToPdf(jb,CW,CH,pw,ph)],{type:"application/pdf"}),nm+".pdf");
     }else saveBlob(await new Promise(r=>c.toBlob(r,"image/png")),nm+".png");
   }catch(e){alert("Gagal membuat berkas. Coba lagi atau gunakan format lain.")}
@@ -280,7 +282,7 @@ $("pr").onclick=async()=>{
   const bt=$("pr"),t0=bt.textContent;bt.disabled=true;bt.textContent="Menyiapkan…";
   try{
     const {d,jr,rk}=lastC,c=await renderCanvas(d,jr,rk);
-    w.document.write('<title>Sertifikat</title><style>@page{size:landscape;margin:0}body{margin:0}img{width:100%}</style><img src="'+c.toDataURL("image/png")+'">');
+    w.document.write('<title>Sertifikat</title><style>@page{size:A4 landscape;margin:0}html,body{margin:0}img{display:block;width:297mm;height:210mm}</style><img src="'+c.toDataURL("image/png")+'">');
     w.document.close();setTimeout(()=>w.print(),400);
   }catch(e){w.close();alert("Gagal menyiapkan cetakan. Coba lagi atau gunakan Unduh PDF.")}
   bt.disabled=false;bt.textContent=t0;
