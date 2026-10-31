@@ -240,6 +240,16 @@ async function drawCert(d){
   do{c.font='italic 700 '+fs+'px "Playfair Display",Georgia,serif';fs-=2}while(c.measureText(nm).width>1000&&fs>36);
   const g=c.createLinearGradient(CX-400,0,CX+400,0);g.addColorStop(0,"#9a6f1c");g.addColorStop(1,"#6e4a10");
   c.fillStyle=g;c.fillText(nm,CX,558);
+  // Kode verifikasi di pita hijau bawah, kiri & kanan ornamen tengah (kiri: kode, kanan: situs untuk memeriksa keaslian).
+  const kd=String(d.kode||"").trim();
+  if(kd){
+    const fit=(t,max,px)=>{let z=px;do{c.font='500 '+z+'px '+SANS;z--}while(c.measureText(t).width>max&&z>11)};
+    c.fillStyle="#fffbe8";c.shadowColor="rgba(0,0,0,.6)";c.shadowBlur=3;c.textBaseline="alphabetic";
+    const tl="Kode Verifikasi: "+kd,tr="Verifikasi: nuciteureup.online";
+    c.textAlign="right";fit(tl,300,19);c.fillText(tl,CX-80,1064);
+    c.textAlign="left";fit(tr,300,19);c.fillText(tr,CX+80,1064);
+    c.shadowBlur=0;
+  }
   c.restore();
 }
 function jpegToPdf(jb,w,h,pw,ph){
